@@ -2,6 +2,7 @@
 name = "bouncer-client"
 version = "0.1.0"
 edition = "2024"
+description = "Postfix transport pipe for bounce_notice_recipient and lightweight client for bouncer-server, replacing the thinner C client"
 
 [dependencies]
 bouncer-proto = { path = "../bouncer-proto" }

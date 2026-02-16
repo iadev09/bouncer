@@ -1,7 +1,3 @@
-keywords = ["postfix", "email", "bounce", "smtp", "ingestion"]
-authors = ["developer <iadeveloper@hotmail.com>"]
-description = "client/server mail delivery tracking on postfix for custimized swfit mailer on mysql+laravel"
-
 [workspace]
 members = [
     "crates/bouncer-proto",

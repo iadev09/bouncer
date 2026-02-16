@@ -2,6 +2,9 @@
 name = "bouncer-server"
 version = "0.1.0"
 edition = "2024"
+keywords = ["postfix", "email", "bounce", "smtp", "ingestion"]
+authors = ["developer <iadeveloper@hotmail.com>"]
+description = "bouncer server to collect bounce notfication from postfix transport, no-reply inbox, maillog observer"
 
 [dependencies]
 anyhow.workspace = true
