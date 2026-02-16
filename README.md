@@ -28,11 +28,6 @@ Rust workspace for LAN bounce ingestion.
 | +---------------------------+             TCP 2147                +------------------------------+
 +-------------------------------+
 
-                   (optional)
-+-------------------------------+            TCP 2147             +------------------------------+
-| app/php side                 |--------------------------------->| bouncer-server               |
-| bouncer-client (or direct)   |                                  | (raw RFC822 ingest)          |
-+-------------------------------+                                  +------------------------------+
 ```
 
 ### 2) Raw mail ingest path (`kind=mail`)
@@ -119,7 +114,7 @@ Server config path resolution order:
 ```yaml
 listen: "0.0.0.0:2147"
 spool: "./storage/spool/bouncer"
-database_url: "mysql://user:pass@127.0.0.1:3306/net777"
+database_url: "mysql://user:pass@127.0.0.1:3306/test_db"
 worker_concurrency: 4
 process_queue_per_worker: 1024
 incoming_scan_secs: 60
