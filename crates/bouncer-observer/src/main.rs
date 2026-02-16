@@ -2,10 +2,11 @@ mod args;
 mod config;
 mod core;
 
+use core::{run_publisher, run_udp_listener};
+
 use anyhow::{Context, Result};
 use bouncer_helpers::{logging, shutdown};
 use config::ObserverConfig;
-use core::{run_publisher, run_udp_listener};
 use tokio::sync::mpsc;
 use tokio_util::sync::CancellationToken;
 use tracing::{info, warn};
@@ -15,7 +16,7 @@ async fn main() -> Result<()> {
     logging::init_logging(
         "bouncer_observer=info,tokio=warn",
         "OBSERVER_LOG",
-        "bouncer-observer",
+        "bouncer-observer"
     );
 
     let config = ObserverConfig::load()?;
@@ -32,13 +33,13 @@ async fn main() -> Result<()> {
     let listener_task = tokio::spawn(run_udp_listener(
         config.clone(),
         events_tx,
-        shutdown.clone(),
+        shutdown.clone()
     ));
 
     let publisher_task = tokio::spawn(run_publisher(
         config.clone(),
         events_rx,
-        shutdown.clone(),
+        shutdown.clone()
     ));
 
     shutdown.cancelled().await;

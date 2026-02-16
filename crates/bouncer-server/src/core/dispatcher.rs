@@ -3,27 +3,26 @@ use std::sync::Arc;
 
 use anyhow::{Context, Result, bail};
 use notify::{
-    Config as NotifyConfig, Event, RecommendedWatcher, RecursiveMode, Watcher,
+    Config as NotifyConfig, Event, RecommendedWatcher, RecursiveMode, Watcher
 };
 use tokio::sync::{Mutex, mpsc};
 use tokio::time::{Duration, interval};
 use tokio_util::sync::CancellationToken;
 use tracing::{error, info, warn};
 
-use crate::app::AppState;
-
 use super::parser::parse_bounce_report;
+use crate::app::AppState;
 
 /// Watches the `incoming/` spool directory for new files and forwards
 /// discovered `.eml` paths to the processing queue.
 pub async fn spawn_notify_watcher(
     state: AppState,
-    process_tx: mpsc::Sender<PathBuf>,
+    process_tx: mpsc::Sender<PathBuf>
 ) {
     if let Err(err) = run_notify_watcher(
         state.spool.incoming.clone(),
         state.shutdown.clone(),
-        process_tx,
+        process_tx
     )
     .await
     {
@@ -34,7 +33,7 @@ pub async fn spawn_notify_watcher(
 async fn run_notify_watcher(
     incoming_dir: PathBuf,
     shutdown: CancellationToken,
-    process_tx: mpsc::Sender<PathBuf>,
+    process_tx: mpsc::Sender<PathBuf>
 ) -> Result<()> {
     let (tx, mut rx) = mpsc::unbounded_channel::<notify::Result<Event>>();
 
@@ -42,7 +41,7 @@ async fn run_notify_watcher(
         move |result| {
             let _ = tx.send(result);
         },
-        NotifyConfig::default(),
+        NotifyConfig::default()
     ) {
         Ok(w) => w,
         Err(err) => {
@@ -58,7 +57,7 @@ async fn run_notify_watcher(
                 "failed to watch incoming spool: {}",
                 incoming_dir.display()
             )
-        },
+        }
     )?;
 
     info!("notify watcher active: path={}", incoming_dir.display());
@@ -101,7 +100,7 @@ async fn run_notify_watcher(
 pub async fn spawn_periodic_scan(
     state: AppState,
     process_tx: mpsc::Sender<PathBuf>,
-    scan_secs: u64,
+    scan_secs: u64
 ) {
     let mut ticker = interval(Duration::from_secs(scan_secs.max(1)));
 
@@ -138,7 +137,7 @@ pub async fn spawn_periodic_scan(
 pub async fn spawn_worker_dispatcher(
     state: AppState,
     process_rx: mpsc::Receiver<PathBuf>,
-    concurrency: usize,
+    concurrency: usize
 ) {
     let workers = concurrency.max(1);
     let shared_rx = Arc::new(Mutex::new(process_rx));
@@ -193,7 +192,7 @@ pub async fn spawn_worker_dispatcher(
 /// parsed bounce status to the database.
 async fn process_spooled_message(
     state: AppState,
-    incoming_path: &Path,
+    incoming_path: &Path
 ) -> Result<()> {
     if !is_eml_file(incoming_path) {
         return Ok(());
@@ -259,7 +258,7 @@ async fn process_spooled_message(
                 processing_path.display(),
                 final_path.display()
             )
-        },
+        }
     )?;
 
     result
@@ -287,7 +286,7 @@ mod tests {
 
     async fn wait_for_path(
         rx: &mut mpsc::Receiver<PathBuf>,
-        expected: &Path,
+        expected: &Path
     ) -> bool {
         let expected = expected.to_path_buf();
         let receive = async {
@@ -313,7 +312,7 @@ mod tests {
         let join = tokio::spawn(run_notify_watcher(
             incoming.clone(),
             shutdown.clone(),
-            tx,
+            tx
         ));
 
         tokio::time::sleep(Duration::from_millis(200)).await;
@@ -340,7 +339,7 @@ mod tests {
         let join = tokio::spawn(run_notify_watcher(
             incoming.clone(),
             shutdown.clone(),
-            tx,
+            tx
         ));
 
         tokio::time::sleep(Duration::from_millis(200)).await;

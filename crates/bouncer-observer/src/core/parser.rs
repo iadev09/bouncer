@@ -87,14 +87,14 @@ fn parse_smtp_message(message: &str) -> Option<SmtpEvent> {
         smtp_status,
         status_code,
         action,
-        diagnostic,
+        diagnostic
     })
 }
 
 fn extract_between<'a>(
     text: &'a str,
     start: &str,
-    end: &str,
+    end: &str
 ) -> Option<&'a str> {
     let start_idx = text.find(start)? + start.len();
     let rem = &text[start_idx..];
@@ -104,7 +104,7 @@ fn extract_between<'a>(
 
 fn extract_token<'a>(
     text: &'a str,
-    key: &str,
+    key: &str
 ) -> Option<&'a str> {
     let start_idx = text.find(key)? + key.len();
     let rem = &text[start_idx..];
@@ -125,7 +125,7 @@ fn map_action(smtp_status: &str) -> &'static str {
         "sent" => "delivered",
         "deferred" => "delayed",
         "bounced" | "expired" => "failed",
-        _ => "failed",
+        _ => "failed"
     }
 }
 
@@ -134,13 +134,13 @@ fn default_status_code(smtp_status: &str) -> &'static str {
         "sent" => "2.0.0",
         "deferred" => "4.0.0",
         "bounced" | "expired" => "5.0.0",
-        _ => "5.0.0",
+        _ => "5.0.0"
     }
 }
 
 fn build_diagnostic(
     queue_id: &str,
-    detail: &str,
+    detail: &str
 ) -> String {
     let mut collapsed = String::with_capacity(detail.len());
     let mut prev_space = false;

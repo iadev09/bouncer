@@ -25,7 +25,7 @@ pub struct ObserverConfig {
     #[serde(default = "default_heartbeat_secs")]
     pub heartbeat_secs: u64,
     #[serde(default = "default_mapping_ttl_secs")]
-    pub mapping_ttl_secs: u64,
+    pub mapping_ttl_secs: u64
 }
 
 impl ObserverConfig {

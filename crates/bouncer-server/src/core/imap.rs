@@ -2,7 +2,8 @@ use std::sync::Arc;
 use std::time::Duration as StdDuration;
 
 use anyhow::{Context, Result};
-use async_imap::{Client, Session, types::Uid};
+use async_imap::types::Uid;
+use async_imap::{Client, Session};
 use async_native_tls::{TlsConnector, TlsStream};
 use futures_util::TryStreamExt;
 use time::{Month, OffsetDateTime};
@@ -12,13 +13,10 @@ use tokio::time::{Duration, interval};
 use tokio_util::sync::CancellationToken;
 use tracing::{debug, info, warn};
 
+use super::UpsertBounceOutcome;
+use super::database::Database;
+use super::parser::{ParserError, parse_bounce_report_detailed};
 use crate::config::ImapConfig;
-
-use super::{
-    UpsertBounceOutcome,
-    database::Database,
-    parser::{ParserError, parse_bounce_report_detailed},
-};
 
 type ImapSession = Session<TlsStream<TcpStream>>;
 const IMAP_PROCESS_CONCURRENCY_MAX: usize = 16;
@@ -31,7 +29,7 @@ const IMAP_FETCH_QUERY_BODY_UID: &str = "(UID BODY.PEEK[])";
 pub async fn run_imap_poll_loop(
     config: ImapConfig,
     db: Arc<Database>,
-    shutdown: CancellationToken,
+    shutdown: CancellationToken
 ) {
     if !config.enabled() {
         info!("imap fallback disabled (IMAP_HOST missing)");
@@ -75,7 +73,7 @@ pub async fn run_imap_poll_loop(
 /// status updates directly to DB (without going through spool/worker path).
 async fn run_imap_poll_once(
     config: &ImapConfig,
-    db: Arc<Database>,
+    db: Arc<Database>
 ) -> Result<()> {
     debug!("imap poll started");
     let host = config.host.as_deref().context("IMAP_HOST missing")?;
@@ -185,7 +183,7 @@ async fn run_imap_poll_once(
                 &mut ignored_missing_hash,
                 &mut db_failures,
                 &mut missing_in_db,
-                &mut join_failures,
+                &mut join_failures
             )
             .await;
         }
@@ -216,7 +214,7 @@ async fn run_imap_poll_once(
                             uid,
                             raw_mail,
                             db,
-                            mark_seen_if_not_exist,
+                            mark_seen_if_not_exist
                         )
                         .await
                     });
@@ -244,7 +242,7 @@ async fn run_imap_poll_once(
                     &mut ignored_missing_hash,
                     &mut db_failures,
                     &mut missing_in_db,
-                    &mut join_failures,
+                    &mut join_failures
                 )
                 .await;
             }
@@ -261,7 +259,7 @@ async fn run_imap_poll_once(
             &mut ignored_missing_hash,
             &mut db_failures,
             &mut missing_in_db,
-            &mut join_failures,
+            &mut join_failures
         )
         .await;
     }
@@ -301,7 +299,7 @@ async fn run_imap_poll_once(
 
 async fn fetch_single_message_body(
     session: &mut ImapSession,
-    uid: Uid,
+    uid: Uid
 ) -> Result<Option<Vec<u8>>> {
     let mut fetches = session
         .uid_fetch(uid.to_string(), IMAP_FETCH_QUERY_BODY_UID)
@@ -332,14 +330,14 @@ enum ProcessResult {
     IgnoredNotDelivery { uid: Uid },
     IgnoredMissingHash { uid: Uid },
     ParseFailed { uid: Uid, code: &'static str, message: String },
-    DbFailed { uid: Uid, hash: String, message: String },
+    DbFailed { uid: Uid, hash: String, message: String }
 }
 
 async fn process_fetched_message(
     uid: Uid,
     raw_mail: Vec<u8>,
     db: Arc<Database>,
-    mark_seen_if_not_exist: bool,
+    mark_seen_if_not_exist: bool
 ) -> ProcessResult {
     let parsed = match parse_bounce_report_detailed(&raw_mail) {
         Ok(parsed) => {
@@ -362,7 +360,7 @@ async fn process_fetched_message(
             return ProcessResult::ParseFailed {
                 uid,
                 code: err.code(),
-                message: err.to_string(),
+                message: err.to_string()
             };
         }
     };
@@ -375,17 +373,18 @@ async fn process_fetched_message(
             ProcessResult::MissingInDb {
                 uid,
                 hash: parsed.hash,
-                mark_seen: mark_seen_if_not_exist,
+                mark_seen: mark_seen_if_not_exist
             }
         }
         Err(err) => ProcessResult::DbFailed {
             uid,
             hash: parsed.hash,
-            message: format!("{err:#}"),
-        },
+            message: format!("{err:#}")
+        }
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn collect_one_process_result(
     processing: &mut JoinSet<ProcessResult>,
     processed_uids: &mut Vec<Uid>,
@@ -395,7 +394,7 @@ async fn collect_one_process_result(
     ignored_missing_hash: &mut usize,
     db_failures: &mut usize,
     missing_in_db: &mut usize,
-    join_failures: &mut usize,
+    join_failures: &mut usize
 ) {
     match processing.join_next().await {
         Some(Ok(ProcessResult::Processed { uid })) => {
@@ -409,9 +408,7 @@ async fn collect_one_process_result(
             }
             warn!(
                 "ERROR_CODE=IMAP_HASH_NOT_FOUND_IN_DB imap message hash not found in DB: uid={}, hash={}, mark_seen_if_not_exist={}",
-                uid,
-                hash,
-                mark_seen
+                uid, hash, mark_seen
             );
         }
         Some(Ok(ProcessResult::IgnoredNotDelivery { uid })) => {
@@ -452,7 +449,9 @@ async fn collect_one_process_result(
         }
         Some(Err(err)) => {
             *join_failures += 1;
-            warn!("ERROR_CODE=IMAP_TASK_JOIN_FAILED imap process task join failed: error={err}");
+            warn!(
+                "ERROR_CODE=IMAP_TASK_JOIN_FAILED imap process task join failed: error={err}"
+            );
         }
         None => {}
     }
@@ -464,7 +463,7 @@ fn build_uid_search_query(max_history: Option<StdDuration>) -> String {
             let since = format_imap_since_date(duration);
             format!("UNSEEN SINCE {since}")
         }
-        None => "UNSEEN".to_string(),
+        None => "UNSEEN".to_string()
     }
 }
 
@@ -492,7 +491,7 @@ fn month_short(month: Month) -> &'static str {
         Month::September => "Sep",
         Month::October => "Oct",
         Month::November => "Nov",
-        Month::December => "Dec",
+        Month::December => "Dec"
     }
 }
 
@@ -500,7 +499,7 @@ async fn open_imap_session(
     config: &ImapConfig,
     host: &str,
     user: &str,
-    pass: &str,
+    pass: &str
 ) -> Result<ImapSession> {
     let port = config.port;
     let connect_timeout =
@@ -558,7 +557,7 @@ async fn open_imap_session(
 
 async fn mark_seen_uids(
     session: &mut ImapSession,
-    uids: &[Uid],
+    uids: &[Uid]
 ) -> Result<()> {
     if uids.is_empty() {
         return Ok(());

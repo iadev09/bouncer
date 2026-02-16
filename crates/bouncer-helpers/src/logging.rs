@@ -10,7 +10,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 pub fn init_logging(
     default_filter: &str,
     env_key: &str,
-    service_name: &str,
+    service_name: &str
 ) {
     #[cfg(not(target_os = "linux"))]
     let _ = service_name;
@@ -42,7 +42,7 @@ pub fn init_logging(
 
 fn build_env_filter(
     default_filter: &str,
-    env_key: &str,
+    env_key: &str
 ) -> EnvFilter {
     EnvFilter::try_from_env(env_key)
         .or_else(|_| EnvFilter::try_from_default_env())

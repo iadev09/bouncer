@@ -8,5 +8,5 @@ use crate::core::{Database, Spool};
 pub struct AppState {
     pub spool: Arc<Spool>,
     pub db: Arc<Database>,
-    pub shutdown: CancellationToken,
+    pub shutdown: CancellationToken
 }

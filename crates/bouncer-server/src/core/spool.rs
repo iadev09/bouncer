@@ -10,7 +10,7 @@ pub struct Spool {
     pub incoming: PathBuf,
     pub processing: PathBuf,
     pub done: PathBuf,
-    pub failed: PathBuf,
+    pub failed: PathBuf
 }
 
 impl Spool {
@@ -20,7 +20,7 @@ impl Spool {
             processing: root.join("processing"),
             done: root.join("done"),
             failed: root.join("failed"),
-            root,
+            root
         }
     }
 
@@ -30,7 +30,7 @@ impl Spool {
             &self.incoming,
             &self.processing,
             &self.done,
-            &self.failed,
+            &self.failed
         ] {
             tokio::fs::create_dir_all(dir).await.with_context(|| {
                 format!("failed to create dir {}", dir.display())
@@ -41,7 +41,7 @@ impl Spool {
 
     pub async fn enqueue_mail(
         &self,
-        payload: &[u8],
+        payload: &[u8]
     ) -> Result<PathBuf> {
         let id = Uuid::now_v7();
         let file_name = format!("{id}.eml");

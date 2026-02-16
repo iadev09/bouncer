@@ -20,7 +20,7 @@ pub struct Config {
     #[serde(default = "default_incoming_scan_secs")]
     pub incoming_scan_secs: u64,
     #[serde(default)]
-    pub imap: ImapConfig,
+    pub imap: ImapConfig
 }
 
 impl Config {
@@ -66,7 +66,7 @@ impl Config {
 
 fn parse_config_path_arg<I>(mut args: I) -> Result<Option<PathBuf>>
 where
-    I: Iterator<Item = String>,
+    I: Iterator<Item = String>
 {
     let first = args.next();
     let second = args.next();
@@ -109,7 +109,7 @@ pub struct ImapConfig {
     )]
     pub max_history: Option<Duration>,
     #[serde(default)]
-    pub mark_seen_if_not_exist: bool,
+    pub mark_seen_if_not_exist: bool
 }
 
 impl Default for ImapConfig {
@@ -124,7 +124,7 @@ impl Default for ImapConfig {
             connect_timeout_secs: default_imap_connect_timeout_secs(),
             max_messages_per_poll: default_imap_max_messages_per_poll(),
             max_history: None,
-            mark_seen_if_not_exist: false,
+            mark_seen_if_not_exist: false
         }
     }
 }

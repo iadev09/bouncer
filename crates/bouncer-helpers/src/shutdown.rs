@@ -36,7 +36,6 @@ pub async fn listen_shutdown(token: CancellationToken) {
         }
 
         token.cancel();
-        return;
     }
 
     #[cfg(not(unix))]

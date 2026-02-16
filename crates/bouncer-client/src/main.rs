@@ -94,7 +94,7 @@ fn send_frame_and_wait_ack(
         .set_read_timeout(Some(timeout))
         .map_err(|err| runtime_err("failed to set read timeout", err))?;
 
-    write_frame_sync(&mut stream, &header_bytes, &body)
+    write_frame_sync(&mut stream, header_bytes, body)
         .map_err(|err| runtime_err("failed to send frame", err))?;
 
     read_ack_sync(&mut stream)

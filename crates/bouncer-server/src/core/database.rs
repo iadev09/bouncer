@@ -12,13 +12,13 @@ const MAIL_STATUS_FAILED: i32 = -7;
 
 #[derive(Debug)]
 pub struct Database {
-    pool: MySqlPool,
+    pool: MySqlPool
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UpsertBounceOutcome {
     UpdatedLocalMessage,
-    MissingLocalMessage,
+    MissingLocalMessage
 }
 
 impl Database {
@@ -39,14 +39,14 @@ impl Database {
 
     pub async fn apply_observer_event(
         &self,
-        event: &ObserverDeliveryEvent,
+        event: &ObserverDeliveryEvent
     ) -> Result<()> {
         let parsed = event.as_parsed_bounce();
         let message_status = map_mail_message_status(&parsed);
 
         let mut tx = self.pool.begin().await.context("failed to begin tx")?;
         let message_id = sqlx::query_scalar::<_, u32>(
-            "SELECT id FROM mail_messages WHERE hash = ? LIMIT 1",
+            "SELECT id FROM mail_messages WHERE hash = ? LIMIT 1"
         )
         .bind(&parsed.hash)
         .fetch_optional(&mut *tx)
@@ -115,12 +115,12 @@ impl Database {
 
     pub async fn upsert_bounce(
         &self,
-        parsed: &ParsedBounce,
+        parsed: &ParsedBounce
     ) -> Result<UpsertBounceOutcome> {
         let mut tx = self.pool.begin().await.context("failed to begin tx")?;
 
         let message_id = sqlx::query_scalar::<_, u32>(
-            "SELECT id FROM mail_messages WHERE hash = ? LIMIT 1",
+            "SELECT id FROM mail_messages WHERE hash = ? LIMIT 1"
         )
         .bind(&parsed.hash)
         .fetch_optional(&mut *tx)
@@ -208,7 +208,7 @@ impl Database {
             }
 
             let exists = sqlx::query_scalar::<_, i64>(
-                "SELECT 1 FROM mail_bounces WHERE hash = ? LIMIT 1",
+                "SELECT 1 FROM mail_bounces WHERE hash = ? LIMIT 1"
             )
             .bind(&parsed.hash)
             .fetch_optional(&mut *tx)
@@ -279,6 +279,6 @@ fn map_mail_message_status(parsed: &ParsedBounce) -> i32 {
         "5.7.1" | "5.7.2" | "5.7.3" | "5.7.0" => MAIL_STATUS_SUSPENDED,
         _ if parsed.status_code.starts_with("2.") => MAIL_STATUS_SUCCESS,
         _ if parsed.status_code.starts_with("4.") => MAIL_STATUS_PENDING,
-        _ => MAIL_STATUS_FAILED,
+        _ => MAIL_STATUS_FAILED
     }
 }

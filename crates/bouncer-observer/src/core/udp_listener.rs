@@ -8,10 +8,9 @@ use tokio::time::interval;
 use tokio_util::sync::CancellationToken;
 use tracing::{debug, info, warn};
 
-use crate::config::ObserverConfig;
-
 use super::parser::parse_postfix_line;
 use super::types::{DeliveryEvent, ParsedSyslog, QueueEntry};
+use crate::config::ObserverConfig;
 
 const UDP_PACKET_BYTES: usize = 8192;
 
@@ -23,7 +22,7 @@ const UDP_PACKET_BYTES: usize = 8192;
 pub async fn run_udp_listener(
     config: ObserverConfig,
     events_tx: mpsc::Sender<DeliveryEvent>,
-    shutdown: CancellationToken,
+    shutdown: CancellationToken
 ) -> Result<()> {
     let socket =
         UdpSocket::bind(config.listen_udp).await.with_context(|| {
@@ -117,7 +116,7 @@ pub async fn run_udp_listener(
 /// Removes stale queue-id mappings that were not refreshed within `ttl`.
 fn prune_queue_map(
     queue_map: &mut HashMap<String, QueueEntry>,
-    ttl: Duration,
+    ttl: Duration
 ) -> usize {
     let before = queue_map.len();
     let now = Instant::now();

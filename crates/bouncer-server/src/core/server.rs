@@ -4,9 +4,8 @@ use tokio::io::AsyncWriteExt;
 use tokio::net::{TcpListener, TcpStream};
 use tracing::{info, warn};
 
-use crate::app::AppState;
-
 use super::parser::ObserverDeliveryEvent;
+use crate::app::AppState;
 
 const MAX_HEADER_LEN: u32 = 64 * 1024;
 const MAX_BODY_LEN: u64 = 25 * 1024 * 1024;
@@ -16,7 +15,7 @@ const MAX_BODY_LEN: u64 = 25 * 1024 * 1024;
 /// The loop exits only when the shared shutdown token is cancelled.
 pub async fn run_tcp_server(
     listen: &str,
-    state: AppState,
+    state: AppState
 ) -> Result<()> {
     let listener = TcpListener::bind(listen)
         .await
@@ -55,7 +54,7 @@ pub async fn run_tcp_server(
 /// - everything else: treat payload as raw mail and enqueue to spool
 async fn handle_client(
     mut stream: TcpStream,
-    state: AppState,
+    state: AppState
 ) -> Result<()> {
     let (header_bytes, body) =
         read_frame_async(&mut stream, MAX_HEADER_LEN, MAX_BODY_LEN)

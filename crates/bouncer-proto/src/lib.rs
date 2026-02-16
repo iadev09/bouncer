@@ -15,7 +15,7 @@ pub struct Header {
     #[serde(default)]
     pub kind: Option<String>,
     #[serde(default)]
-    pub source: Option<String>,
+    pub source: Option<String>
 }
 
 #[derive(Debug, Error)]
@@ -31,7 +31,7 @@ pub enum ProtoError {
     #[error("header encode error: {0}")]
     HeaderEncode(String),
     #[error("header decode error: {0}")]
-    HeaderDecode(String),
+    HeaderDecode(String)
 }
 
 pub fn encode_header_json(header: &Header) -> Result<Vec<u8>, ProtoError> {
@@ -47,7 +47,7 @@ pub fn decode_header_json(bytes: &[u8]) -> Result<Header, ProtoError> {
 pub fn write_frame_sync<W: Write>(
     writer: &mut W,
     header: &[u8],
-    body: &[u8],
+    body: &[u8]
 ) -> Result<(), ProtoError> {
     let header_len = u32::try_from(header.len())
         .map_err(|_| ProtoError::HeaderTooLarge(u32::MAX))?;
@@ -66,7 +66,7 @@ pub fn write_frame_sync<W: Write>(
 pub async fn write_frame_async<W: AsyncWrite + Unpin>(
     writer: &mut W,
     header: &[u8],
-    body: &[u8],
+    body: &[u8]
 ) -> Result<(), ProtoError> {
     let header_len = u32::try_from(header.len())
         .map_err(|_| ProtoError::HeaderTooLarge(u32::MAX))?;
@@ -85,7 +85,7 @@ pub async fn write_frame_async<W: AsyncWrite + Unpin>(
 pub async fn read_frame_async<R: AsyncRead + Unpin>(
     reader: &mut R,
     max_header_len: u32,
-    max_body_len: u64,
+    max_body_len: u64
 ) -> Result<(Vec<u8>, Vec<u8>), ProtoError> {
     let mut magic = [0_u8; 4];
     reader.read_exact(&mut magic).await?;

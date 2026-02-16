@@ -1,9 +1,9 @@
-use std::env;
-use std::fmt;
 use std::path::PathBuf;
+use std::{env, fmt};
 
 use anyhow::{Context, Result};
-use async_imap::{Client, types::Uid};
+use async_imap::Client;
+use async_imap::types::Uid;
 use async_native_tls::TlsConnector;
 use futures_util::TryStreamExt;
 use tokio::net::TcpStream;
@@ -122,13 +122,13 @@ struct Args {
     mailbox: String,
     search: String,
     limit: usize,
-    output_dir: PathBuf,
+    output_dir: PathBuf
 }
 
 impl Args {
     fn parse<I>(mut it: I) -> Result<Self>
     where
-        I: Iterator<Item = String>,
+        I: Iterator<Item = String>
     {
         let mut host = None;
         let mut port = 993u16;
@@ -164,14 +164,14 @@ impl Args {
                 }
                 "--output-dir" => {
                     output_dir = PathBuf::from(
-                        it.next().context("missing value for --output-dir")?,
+                        it.next().context("missing value for --output-dir")?
                     );
                 }
                 "-h" | "--help" => {
                     print_usage();
                     std::process::exit(0);
                 }
-                _ => return Err(anyhow::anyhow!("unknown argument: {arg}")),
+                _ => return Err(anyhow::anyhow!("unknown argument: {arg}"))
             }
         }
 
@@ -183,7 +183,7 @@ impl Args {
             mailbox,
             search,
             limit,
-            output_dir,
+            output_dir
         })
     }
 }
@@ -197,7 +197,7 @@ fn print_usage() {
 impl fmt::Display for Args {
     fn fmt(
         &self,
-        f: &mut fmt::Formatter<'_>,
+        f: &mut fmt::Formatter<'_>
     ) -> fmt::Result {
         write!(
             f,

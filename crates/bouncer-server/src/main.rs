@@ -2,16 +2,16 @@ mod app;
 mod config;
 mod core;
 
+use core::{
+    Database, Spool, run_imap_poll_loop, run_tcp_server, spawn_notify_watcher,
+    spawn_periodic_scan, spawn_worker_dispatcher
+};
 use std::sync::Arc;
 
 use anyhow::{Context, Result};
 use app::AppState;
 use bouncer_helpers::{logging, shutdown};
 use config::Config;
-use core::{
-    Database, Spool, run_imap_poll_loop, run_tcp_server, spawn_notify_watcher,
-    spawn_periodic_scan, spawn_worker_dispatcher,
-};
 use tokio::sync::mpsc;
 use tokio_util::sync::CancellationToken;
 use tracing::info;
@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
     logging::init_logging(
         "bouncer_server=info,notify=warn,tokio=warn",
         "BOUNCER_LOG",
-        "bouncer-server",
+        "bouncer-server"
     );
 
     let config = Config::load().context("failed to load configuration")?;
@@ -31,7 +31,7 @@ async fn main() -> Result<()> {
     let db = Arc::new(
         Database::connect(&config.database_url)
             .await
-            .context("failed to connect database")?,
+            .context("failed to connect database")?
     );
 
     let state = AppState { spool, db, shutdown: CancellationToken::new() };
@@ -54,17 +54,17 @@ async fn main() -> Result<()> {
     tokio::spawn(spawn_periodic_scan(
         state.clone(),
         process_tx.clone(),
-        config.incoming_scan_secs,
+        config.incoming_scan_secs
     ));
     tokio::spawn(spawn_worker_dispatcher(
         state.clone(),
         process_rx,
-        config.worker_concurrency,
+        config.worker_concurrency
     ));
     tokio::spawn(run_imap_poll_loop(
         config.imap.clone(),
         state.db.clone(),
-        state.shutdown.clone(),
+        state.shutdown.clone()
     ));
 
     run_tcp_server(&config.listen, state).await

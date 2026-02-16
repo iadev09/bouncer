@@ -7,13 +7,13 @@ pub fn deserialize_optional_duration<'de, D>(
     deserializer: D
 ) -> Result<Option<Duration>, D::Error>
 where
-    D: Deserializer<'de>,
+    D: Deserializer<'de>
 {
     #[derive(Deserialize)]
     #[serde(untagged)]
     enum RawDuration {
         Seconds(u64),
-        Text(String),
+        Text(String)
     }
 
     let raw = Option::<RawDuration>::deserialize(deserializer)?;
@@ -34,13 +34,13 @@ where
 pub fn deserialize_duration<'de, D, T>(deserializer: D) -> Result<T, D::Error>
 where
     D: Deserializer<'de>,
-    T: From<Duration> + Default,
+    T: From<Duration> + Default
 {
     let s: Option<String> = Option::deserialize(deserializer)?;
     match s {
         Some(duration_str) => humantime::parse_duration(&duration_str)
             .map(T::from)
             .map_err(serde::de::Error::custom),
-        None => Ok(T::default()),
+        None => Ok(T::default())
     }
 }

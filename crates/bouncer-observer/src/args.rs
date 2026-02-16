@@ -4,13 +4,13 @@ use anyhow::{Result, bail};
 
 #[derive(Debug, Default)]
 pub struct ObserverArgs {
-    pub config_path: Option<PathBuf>,
+    pub config_path: Option<PathBuf>
 }
 
 impl ObserverArgs {
     pub fn parse<I>(mut args: I) -> Result<Self>
     where
-        I: Iterator<Item = String>,
+        I: Iterator<Item = String>
     {
         let first = args.next();
         let second = args.next();
