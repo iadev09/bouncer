@@ -1,0 +1,235 @@
+Return-Path: <>
+Delivered-To: poster@claviron.app
+Received: from mail.claviron.app
+	by de02.claviron.net with LMTP
+	id 8FZ5EmU3+mhEsgMA9Hht/w
+	(envelope-from <>)
+	for <poster@claviron.app>; Thu, 23 Oct 2025 17:10:45 +0300
+Received: from localhost (localhost [127.0.0.1])
+	by mail.claviron.app (Postfix) with ESMTP id 4AA9C20A3CADC
+	for <poster@claviron.app>; Thu, 23 Oct 2025 17:10:45 +0300 (+03)
+X-Virus-Scanned: amavis at claviron.net
+X-Spam-Flag: NO
+X-Spam-Score: -1.096
+X-Spam-Level:
+X-Spam-Status: No, score=-1.096 tagged_above=-999 required=5
+ tests=[ALL_TRUSTED=-1, DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+ HTML_MESSAGE=0.001, URIBL_BLOCKED=0.001, URIBL_DBL_BLOCKED_OPENDNS=0.001,
+ URIBL_ZEN_BLOCKED_OPENDNS=0.001] autolearn=ham autolearn_force=no
+Authentication-Results: mail.claviron.app (amavis); dkim=pass (1024-bit key)
+ header.d=claviron.app
+Received: from mail.claviron.app ([107.158.XXX.XXX])
+ by localhost (mail.claviron.app [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id ew-7Dyfkze6S for <poster@claviron.app>;
+ Thu, 23 Oct 2025 17:10:44 +0300 (+03)
+Received: from claviron.app (claviron.app [173.44.XXX.XXX])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.claviron.app (Postfix) with ESMTPS id 6CDB620A3CADB
+	for <noreply@claviron.app>; Thu, 23 Oct 2025 17:10:44 +0300 (+03)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.claviron.app 6CDB620A3CADB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=claviron.app;
+	s=default; t=1761228644;
+	bh=SV558vheFs5b30nA4MeHCs1V9qZE09T2ep50xUo9D4U=;
+	h=Date:From:Subject:To:Message-Id;
+	b=Hjl0UgBNnVjcn57NItlmcwmcbjxdF2DoyIjWoGWsGoQg7d5f3MMr1SUsmxb6UaBND
+	 vgYFsHjgErURPDQeA6X++OFXi/bUftdIKrs96lc4gsOWzAr6phHC/fEQ2VMvbjRHwo
+	 Bu/fTg/FAdiF32r1jJ5fkdBtaHDMYgsibTcufLG8=
+Received: by claviron.app (Postfix)
+	id 0E4AC7DCDF; Thu, 23 Oct 2025 17:10:39 +0300 (+03)
+Date: Thu, 23 Oct 2025 17:10:39 +0300 (+03)
+From: Mail Delivery System <MAILER-DAEMON@claviron.app>
+Subject: Undelivered Mail Returned to Sender
+To: noreply@claviron.app
+Auto-Submitted: auto-replied
+MIME-Version: 1.0
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="747817E24E.1761228639/claviron.app"
+Message-Id: <20251023141039.0E4AC7DCDF@claviron.app>
+
+This is a MIME-encapsulated message.
+
+--747817E24E.1761228639/claviron.app
+Content-Description: Notification
+Content-Type: text/plain; charset=us-ascii
+
+This is the mail system at host claviron.app.
+
+I'm sorry to have to inform you that your message could not
+be delivered to one or more recipients. It's attached below.
+
+For further assistance, please send mail to postmaster.
+
+If you do so, please include this problem report. You can
+delete your own text from the attached returned message.
+
+                   The mail system
+
+<member09@gmail.com>: host gmail-smtp-in.l.google.com[173.194.76.26] said:
+    550-5.7.1 [173.44.XXX.XXX      12] Gmail has detected that this message is
+    550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to
+    Gmail, 550-5.7.1 this message has been blocked. For more information, go to
+    550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError
+    ffacd0b85a97d-429898c00absi1171146f8f.563 - gsmtp (in reply to end of DATA
+    command)
+
+--747817E24E.1761228639/claviron.app
+Content-Description: Delivery report
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns; claviron.app
+X-Postfix-Queue-ID: 747817E24E
+X-Postfix-Sender: rfc822; noreply@claviron.app
+Arrival-Date: Thu, 23 Oct 2025 17:10:38 +0300 (+03)
+
+Final-Recipient: rfc822; member09@gmail.com
+Original-Recipient: rfc822;member09@gmail.com
+Action: failed
+Status: 5.7.1
+Remote-MTA: dns; gmail-smtp-in.l.google.com
+Diagnostic-Code: smtp; 550-5.7.1 [173.44.XXX.XXX      12] Gmail has detected
+    that this message is 550-5.7.1 likely unsolicited mail. To reduce the
+    amount of spam sent to Gmail, 550-5.7.1 this message has been blocked. For
+    more information, go to 550 5.7.1
+    https://support.google.com/mail/?p=UnsolicitedMessageError
+    ffacd0b85a97d-429898c00absi1171146f8f.563 - gsmtp
+
+--747817E24E.1761228639/claviron.app
+Content-Description: Undelivered Message
+Content-Type: message/rfc822
+
+Return-Path: <noreply@claviron.app>
+Received: from [127.0.0.1] (claviron.app [173.44.XXX.XXX])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: poster)
+	by claviron.app (Postfix) with ESMTPSA id 747817E24E
+	for <member09@gmail.com>; Thu, 23 Oct 2025 17:10:38 +0300 (+03)
+DKIM-Filter: OpenDKIM Filter v2.11.0 claviron.app 747817E24E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=claviron.app;
+	s=default; t=1761228638;
+	bh=lWjAiqhS9oACRzWViexL31I0b5aZHIM3wEPlJNjd6Ok=;
+	h=From:To:Subject:Message-ID:List-Unsubscribe-Post:List-Unsubscribe:
+	 Date;
+	b=WWkN+t9Ufw3k/fLEfB1U0iHmkomdNGKV7PNemzN5KYkWXNHIgcR6NOkNTs5njDUbT
+	 aZ0ggffyvabmPxECvSCrZwgHBmDKjCTBgRiHm7BBZQfyvP0PHNfTBuFvUDp/eMbd+g
+	 WQO4JEDh4zmVc/aOXv2UJSk5kGttnN6anfYUXQX4=
+From: "claviron.app" <noreply@claviron.app>
+Reply-To: info@claviron.app
+To: member09@gmail.com
+Subject: Yeni Adresimiz!
+Message-ID: <44b54b9b9f739ca1a82e91aab5200e0e@claviron.app>
+X-Message-Id: 44b54b9b9f739ca1a82e91aab5200e0e
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+List-Unsubscribe: <https://hooks.claviron.net/unsubscribe/44b54b9b9f739ca1a82e91aab5200e0e>
+MIME-Version: 1.0
+Date: Thu, 23 Oct 2025 17:10:38 +0300
+Content-Type: multipart/alternative; boundary=G-G8pLy6
+
+--G-G8pLy6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+
+
+# Merhaba member09 !
+
+
+
+Bol =C5=9Eanslar!
+
+
+All =
+rights reserved.
+
+--G-G8pLy6
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns=3D"http://www.=
+w3.org/1999/xhtml">
+<head>
+<title>xx</title>
+<meta name=3D"viewpo=
+rt" content=3D"width=3Ddevice-width, initial-scale=3D1.0">
+<meta http-equ=
+iv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8">
+<meta name=3D=
+"color-scheme" content=3D"light">
+<meta name=3D"supported-color-schemes" =
+content=3D"light">
+<style>
+@media only screen and (max-width: 600px) {=
+
+.inner-body {
+width: 100% !important;
+}
+
+.footer {
+width: 100%=
+ !important;
+}
+}
+
+@media only screen and (max-width: 500px) {
+.bu=
+tton {
+width: 100% !important;
+}
+}
+</style>
+</head>
+<body style=
+=3D"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont,=
+ 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Se=
+goe UI Emoji', 'Segoe UI Symbol'; position: relative; -webkit-text-size-adj=
+ust: none; background-color: #ffffff; color: #718096; height: 100%; line-he=
+ight: 1.4; margin: 0; padding: 0; width: 100% !important;">
+
+
+
+<!-- Email Body -->
+<tr>=
+
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+=
+</tr>
+</table>
+
+
+</td>
+</tr>
+</tab=
+le>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+
+
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>=
+
+</html>
+--G-G8pLy6--
+
+
+--747817E24E.1761228639/claviron.app--

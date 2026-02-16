@@ -1,0 +1,35 @@
+keywords = ["postfix", "email", "bounce", "smtp", "ingestion"]
+authors = ["developer <iadeveloper@hotmail.com>"]
+description = "client/server mail delivery tracking on postfix for custimized swfit mailer on mysql+laravel"
+
+[workspace]
+members = [
+    "crates/bouncer-proto",
+    "crates/bouncer-server",
+    "crates/bouncer-client",
+    "crates/bouncer-observer",
+    "crates/bouncer-tools",
+    "crates/bouncer-helpers",
+]
+resolver = "2"
+
+[workspace.dependencies]
+anyhow = "1.0"
+bytes = "1.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+thiserror = "2.0"
+tokio = { version = "1.45", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+notify = "8.2"
+uuid = { version = "1.18", features = ["v4", "v7"] }
+tokio-util = "0.7.18"
+sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio-rustls", "mysql"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

@@ -1,0 +1,599 @@
+Return-Path: <>
+Delivered-To: poster@claviron.app
+Received: from mail.claviron.app
+	by de02.claviron.net with LMTP
+	id ELT3B/DQuGj09SIA9Hht/w
+	(envelope-from <>)
+	for <poster@claviron.app>; Thu, 04 Sep 2025 02:36:16 +0300
+Received: from localhost (localhost [127.0.0.1])
+	by mail.claviron.app (Postfix) with ESMTP id 1DF61205200FC
+	for <poster@claviron.app>; Thu, 04 Sep 2025 02:36:16 +0300 (+03)
+X-Virus-Scanned: amavis at claviron.net
+X-Spam-Flag: NO
+X-Spam-Score: 1.497
+X-Spam-Level: *
+X-Spam-Status: No, score=1.497 tagged_above=-999 required=5
+ tests=[FORGED_SPF_HELO=1, HTML_MESSAGE=0.001, PDS_BTC_ID=0.49,
+ RCVD_IN_DNSWL_NONE=-0.0001, RCVD_IN_MSPIKE_H2=0.001,
+ RCVD_IN_VALIDITY_CERTIFIED_BLOCKED=0.001,
+ RCVD_IN_VALIDITY_RPBL_BLOCKED=0.001, RCVD_IN_ZEN_BLOCKED_OPENDNS=0.001,
+ SPF_HELO_PASS=-0.001, URIBL_BLOCKED=0.001, URIBL_DBL_BLOCKED_OPENDNS=0.001,
+ URIBL_ZEN_BLOCKED_OPENDNS=0.001] autolearn=no autolearn_force=no
+Received: from mail.claviron.app ([107.158.XXX.XXX])
+ by localhost (mail.claviron.app [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id h7JAqi8umpr7 for <poster@claviron.app>;
+ Thu,  4 Sep 2025 02:36:14 +0300 (+03)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05olkn2106.outbound.protection.outlook.com [40.92.91.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.claviron.app (Postfix) with ESMTPS id BA91A205200FB
+	for <noreply@claviron.app>; Thu, 04 Sep 2025 02:36:14 +0300 (+03)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.claviron.app BA91A205200FB
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wlJZ7n60jK71kzqef6cULQoFX4wl/T0Vn3BIuU4yUoJ533t/182KDX1XjRryzGzpKzlFTEOu3Vk1dnazNcGRLJzGOR3iMKDQNpGJesx9PphLyoTx9JF+ccFfw4vmUbe9IM+xaNomVmn0Ng0xy2z+KxnK7G5elU521gMcHur3+klnxroJsRWtnJM+Ujwx5LM03gW70pQq1HgAM27Mhca7w1eh2/z9vh9uf8ZTgdB6OHjCDN8I3HarbQo5yIaPHQMH0MR/g5tSizAVCyPBHawbGsrZs7EbDSaswUaPDqmpQ+742pxLygVQtcyLlu4UqcB0tytvb2r/MhOq6SBGQ+lPgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GoSzSmLwwDOsmuUtErdObYDpdeTU/1wkVvdelW70jQk=;
+ b=WxvkLsJ7POyouUN7OkcsF/A7b1Och7Yzn05IyZnyFCI8b/w6EJz+J3AktT8SaIwrMKtPtKbQOaA2GsnQAYZSqdlSrgIQVicaxXZxwdhLeOrWxVFh/8Tq1hZDJTsmJRNjP+isYv1GysFsLasClxrO5cNtXEJK0RZuhCMZJMOOBApp97BAuM++sUfYVACkrQaa+uwqUbSGI1QgTbWIpu2iP14H3WERP28cc+9xhJ2ahi/V07STJoX20xyHadPzmsGzg8831Qn0w+dMhV5+vQOUgmEKTfOqPPKxFl84KAQzrRaVAckrJDuaR2hM2G/afw1vUxlXG6HjvpbEvnw1JIH3dQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+MIME-Version: 1.0
+From: <postmaster@outlook.com>
+To: <johndoe+SRS=KO3a3=3O=claviron.app=noreply@hotmail.com>
+Date: Wed, 3 Sep 2025 23:36:13 +0000
+Content-Type: multipart/report; report-type=delivery-status;
+	boundary="b2634995-f988-4297-b8f7-648c71d0b657"
+X-MS-Exchange-Message-Is-Ndr:
+Content-Language: en-US
+Message-ID:
+ <fb158a0d-e08c-4d5f-8ad3-d6bea6b59c49@VI0P193MB2555.EURP193.PROD.OUTLOOK.COM>
+In-Reply-To:
+ <093411c04c59483e843e440f75ff38c8@AM9P193MB0821.EURP193.PROD.OUTLOOK.COM>
+References: <c27335e4586d69311bb4668e9dc70bd5@claviron.app>
+ <093411c04c59483e843e440f75ff38c8@AM9P193MB0821.EURP193.PROD.OUTLOOK.COM>
+Thread-Topic: =?iso-8859-3?Q?16xtube.web_Giri=BA_Adresimiz!?=
+Thread-Index: AQHcHSb26n2oXRLRG0m+d6ACuqUodrSCE6IcgAAJIoU=
+Subject:
+ =?iso-8859-3?Q?Undeliverable:_=A9LT:_16xtube.web_Giri=BA_Adresimiz!?=
+Auto-Submitted: auto-replied
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI0P193MB2555:EE_
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|12050799012|6092099016|8022599003|8060799015|461199028|41001999006|20055399003|2082599003|440099028|3412199025|19111999003|26115399003;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-3?Q?M3oUwQc7XrWyde5bQivxoSJv5L9nQHgVvyVV6oYVTUit12elpnwk+z+7PO?=
+ =?iso-8859-3?Q?MOw91F9Vph9QqjDNbrVpjbSsgKU32c3jYt48z+rw92ZZs2M9GzIA2fK7j/?=
+ =?iso-8859-3?Q?6btFkrfi9/S10tNINB/oicfG2pGoPhJNVnJSpNLjKeGf5XgVNIV5JHenH+?=
+ =?iso-8859-3?Q?8wcLZPn0Dcq6IGjad8mVohXoesD4R3Zi+R+9fsGajW5LfaG6vYHtXZbAWg?=
+ =?iso-8859-3?Q?hW4LsKuE7yqiurtkuzmEclqjNoHYPiAgBBg2bURZhAxlMXGQ7LeY5n7wVG?=
+ =?iso-8859-3?Q?+9yuc3ijkqxVoJO5REXD8nBm0HVj7yhNAZKRjdSeHnp1sQSPsM+tgRY/9B?=
+ =?iso-8859-3?Q?D2xYnEfOsXUG5UhGT4zavgA+dvxkRvXTvW0J6fZsRSWBuyzcVhgWnKahrn?=
+ =?iso-8859-3?Q?VXT6/UC8TlsOMb8pEkgD4yIU6w5XQ3FYyEF9nwGVD4p/qT8zbc7yITmOgl?=
+ =?iso-8859-3?Q?RCFGGM/DDd+/MNUbBuU2U5aT6InHryqcZo9nAWP5sAYvxEaphu0EVC0Dk+?=
+ =?iso-8859-3?Q?17GtxOD4LYsfu+p55lnW8CTQjsGIhawdIrLUgGR3Mhr/sBfCRj5xMV/+R6?=
+ =?iso-8859-3?Q?jUqnKf2fu75hugLs46drTFspOZJnv8OK02cEUyi/LY+z1Wp1yUMErh7JmP?=
+ =?iso-8859-3?Q?Jh07lVNq4vUQNH1jcCQ7NKxA29WVK0u/nudb/ML/mFrUOhk9WY6d+tJne8?=
+ =?iso-8859-3?Q?e5fmN2Zwx4+GHTA6lICIJVDmD89bPHvvQ2J6VLpwcLLPiDPgkiEwIcT3Kk?=
+ =?iso-8859-3?Q?m7MW4wV58jQWFFWBi5FYkzU/3TxSteL+P7neTihLJWVhXhXka7gPi/rZE/?=
+ =?iso-8859-3?Q?Y6d50cN7iqxJdIZezChaggd9TlWGTN1UF/CsBWGwDSc3D4cU3ksI5ewsR7?=
+ =?iso-8859-3?Q?lUJ1ngXpWO+Vnwj7fKZ8zfwXhczF9J7eJrhcnq8jfhe58qkI51wEME+E9h?=
+ =?iso-8859-3?Q?ORCQjbBxHXRD2o1A4wiwY/ZCZsAQFpFbUhcoERlMWOtnAqBrf+V/NXnFOo?=
+ =?iso-8859-3?Q?ZkQFK/JDBnbIuMbs+RNrE++JyiL0YeZnAoKfxsh4zoTfPYYYgzjFBMJ7lS?=
+ =?iso-8859-3?Q?nZYlvGxOtd9bX2I9jyEA72r2CrRGB43mXXj7trU+XKfxHZEhhZAxVl4Kup?=
+ =?iso-8859-3?Q?oFZvDiX7PK4UJT+hr+1MpZmY7/C/lheavNeAIwsbWyy0nTMyVJp7koI+h9?=
+ =?iso-8859-3?Q?ySXIIm3Yz2o68BBcTs0d7qv2rM5GUcLFJnWFn8BvWhFlgfxSZL55eYr2E+?=
+ =?iso-8859-3?Q?3ncVahY6PE9OdYOuuLBz/LsUmSLSMExvYBuMtKowQrJXpNeotY0dz4qkWr?=
+ =?iso-8859-3?Q?q+9j1aNe6XT8ES5dSp8r/oTjWFYfCLOQrscMnA8+qsv8i0MgcqrucpqlHs?=
+ =?iso-8859-3?Q?gdqxCYjMq8SekPcZDneGFHQ5q5kWJuKvisC/VzSFkCZkX6LD+IR98PcmVv?=
+ =?iso-8859-3?Q?0dyn1YOSwRhna2fD?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	Lxbfv10dXmWv8zo4XDLHRS5HBAGuV4S8/6GkanVYSvrvPNX3OjHhQfMG1jOa2kTrGV2Xv/wBz2aqNQJlasD4x57GQgQM7f8Vh24bEWYfUA3Y/Dh+peBEugnZ2frpQcop+AxIW6LPMm7qP7l8q93Y8I8ZhgPS1xD95pRAjURMUxQpluteflSvu1ifKweVbOkI
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 23:36:13.7417
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-AuthSource: VI0P193MB2555.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-Network-Message-Id:
+	3ff2dfef-e861-4ef9-39a6-08ddeb42abb2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P193MB2555
+
+--b2634995-f988-4297-b8f7-648c71d0b657
+Content-Type: multipart/alternative; differences=Content-Type;
+	boundary="bf8bd791-23f6-40a7-8245-49e85a108b7b"
+
+--bf8bd791-23f6-40a7-8245-49e85a108b7b
+Content-Type: text/plain; charset="iso-8859-3"
+Content-Transfer-Encoding: quoted-printable
+
+mx.google.com rejected your message to the following email addresses:
+
+sx1300624@steanne-stlouis.fr (sx1300624@steanne-stlouis.fr)<mailto:sx130062=
+4@steanne-stlouis.fr>
+There's a problem with the recipient's mailbox. Please try resending your m=
+essage. If the problem continues, please contact your email admin.
+
+
+mx.google.com gave this error:
+The user you are trying to contact is receiving mail at a rate that prevent=
+s additional messages from being delivered. For more information, go to htt=
+ps://support.google.com/mail/?p=3DReceivingRatePerm 00721157ae682-723a82c4e=
+54si28694937b3.108 - gsmtp
+
+
+
+
+
+
+
+Diagnostic information for administrators:
+
+Generating server: VI0P193MB2555.EURP193.PROD.OUTLOOK.COM
+Total retry attempts: 2
+
+sx1300624@steanne-stlouis.fr
+mx.google.com
+Remote server returned '550-5.2.1 The user you are trying to contact is rec=
+eiving mail at a rate that 550-5.2.1 prevents additional messages from bein=
+g delivered. For more 550-5.2.1 information, go to 550 5.2.1 https://suppor=
+t.google.com/mail/?p=3DReceivingRatePerm 00721157ae682-723a82c4e54si2869493=
+7b3.108 - gsmtp'
+
+Original message headers:
+
+ARC-Seal: i=3D1; a=3Drsa-sha256; s=3Darcselector10001; d=3Dmicrosoft.com; c=
+v=3Dnone;
+ b=3DaOta3RcsQmnUXIoeLzfJwsAEjsVRZnLnubmWop2iROpqyymKlCy3nLOmLTqnw4LS8ssdtC=
+lGo8e7ENjqanj9VdxWvgFDdGJrj9vpZN4E/O7b7GC0wyTU2se+878GeKEgAwzBq8I0yW/f1OIgB=
+tPFI7Y0X5bkD2A0Zqb76E5z2Jwe3bemKZFgUe5JaSZwLmIEzRO2FPqEHtvootKXv4KvBEHM6B1b=
+myGS8VJ0Q0yUxIJ1WZgXn1gVFmCnEnZlTh4Jkkn8lVHunK85dcs+pFJezZqG4I6hXeOJvrq7tmg=
+FgtKL9ExdfHuU1a7Xbwkb/LdEuLcZS55fRNZ9AM+Y0xVQqA=3D=3D
+ARC-Message-Signature: i=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dmicr=
+osoft.com;
+ s=3Darcselector10001;
+ h=3DFrom:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-A=
+ntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Ex=
+change-AntiSpam-MessageData-1;
+ bh=3DaQAgiqnTwY1/vwoPeI1xno5aAe7Q0msOrZdmb1zj/Ns=3D;
+ b=3DbyY3JiK7zEHOhF+1iRzHXdQpNW1dV8XLb0IIxAnQYM99RlO3mb94PQAmfPeRWFsDCszsZC=
+cPnxDG+TzlzsxHhqROKahKR7DQKlhtmco6924iSsP2XBEuOBppIDFCxvIIq0hBX3tgPWYxGQN8S=
+tgJul2S4/ksGcgzM0PdMSg/rUiGNYdOqClOf9E7hjqQE2FiTq2YHR+KjH7oU+ixef0PQ6m/JZ5G=
+ZVRJO3j7NUsg/kvRcMP+G1bVKs/JJd9WDVMoZSVBBunVn2zDZYPSquI1uzm6D7/Uar8arrZKow2=
+/1LyHpAUy0Fh2phH5dTi/yZAp91+n+zdjdNnqLFUHFNZ2iA=3D=3D
+ARC-Authentication-Results: i=3D1; mx.microsoft.com 1; spf=3Dnone; dmarc=3D=
+none;
+ dkim=3Dnone; arc=3Dnone
+DKIM-Signature: v=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dhotmail.com=
+;
+ s=3Dselector1;
+ h=3DFrom:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-S=
+enderADCheck;
+ bh=3DaQAgiqnTwY1/vwoPeI1xno5aAe7Q0msOrZdmb1zj/Ns=3D;
+ b=3DcYlgqEfz4nMnBhipVPqqLo5Ofvain4rznVq6J1wagaNCikghg46nj3LTlGlFpFQU4VPpI5=
+d95Swvun2HnkbWI/d1eYyuWKdqwsiBv14MuMsAGBuV7+1YzR1KmHjX1obBz9Q4QSWR5oaNODek/=
+mGKkSg19eQXszOX5To5/yv3BzUfVP45FLxnbVkmmvN8b/HXEVAmtqySboeJOGTtfknr/wzBl2dx=
+hmHkPJ99A5uYFrRJJvlWoBzmFEmYRbKaG3p/7Ju2nj9AFccMbJd8A/YtJXQ5YoRIZaGneGuvQuy=
+/4VNp76CAl3Sy7TKc71oI8Hx2iajWAgfBzwlzO2Hx3GgKjQ=3D=3D
+Received: from AM9P193MB0821.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:1fb::1=
+2)
+ by VI0P193MB2555.EURP193.PROD.OUTLOOK.COM (2603:10a6:800:258::16) with
+ Microsoft SMTP Server (version=3DTLS1_2,
+ cipher=3DTLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Wed, 3 S=
+ep
+ 2025 23:03:33 +0000
+Received: from AM9P193MB0821.EURP193.PROD.OUTLOOK.COM ([::1]) by
+ AM9P193MB0821.EURP193.PROD.OUTLOOK.COM ([fe80::3fb6:be49:acad:6178%4]) wit=
+h
+ Microsoft SMTP Server id 15.20.9073.026; Wed, 3 Sep 2025 23:03:32 +0000
+From: =3D?iso-8859-9?Q?orhan_k=3DFDl=3DFD=3DE7?=3D <johndoe@hotmail.com>
+To: "sx1300624@steanne-stlouis.fr" <sx1300624@steanne-stlouis.fr>
+Subject: =3D?iso-8859-9?Q?=3DDDLT:_16xtube.web_Giri=3DFE_Adresimiz!?=3D
+Thread-Topic: =3D?iso-8859-9?Q?16xtube.web_Giri=3DFE_Adresimiz!?=3D
+Thread-Index: AQHcHSb26n2oXRLRG0m+d6ACuqUodrSCE6Ic
+Date: Wed, 3 Sep 2025 23:03:32 +0000
+Message-ID: <093411c04c59483e843e440f75ff38c8@AM9P193MB0821.EURP193.PROD.OU=
+TLOOK.COM>
+References: <c27335e4586d69311bb4668e9dc70bd5@claviron.app>
+In-Reply-To: <c27335e4586d69311bb4668e9dc70bd5@claviron.app>
+X-MS-Has-Attach:
+X-MS-Exchange-Inbox-Rules-Loop: johndoe@hotmail.com
+X-MS-TNEF-Correlator:
+x-ms-exchange-parent-message-id: <c27335e4586d69311bb4668e9dc70bd5@claviron.=
+net>
+auto-submitted: auto-generated
+x-ms-exchange-generated-message-source: Mailbox Rules Agent
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9P193MB0821:EE_|VI0P193MB2555:EE_
+x-ms-office365-filtering-correlation-id: 04f81f14-ac9d-4149-d1ef-08ddeb3e1a=
+fd
+x-microsoft-antispam: BCL:0;ARA:14566002|13031999003|12050799012|9400799033=
+|31061999003|8022599003|8060799015|461199028|19110799012|440099028|34121990=
+25|10035399007|102099032|26104999006;
+x-microsoft-antispam-message-info: =3D?iso-8859-9?Q?W+UvGvEBfj4B1cWdqqLNCEp=
+yBgfvhbO5OBtz2KusCRFMB/Jl7YMEg7cgoY?=3D
+ =3D?iso-8859-9?Q?zUEWlr0MhTRvuN8wNoOo9y5N4hnp0tWu2bos/EmBFRFzoF78ZUeMP0fpB=
+I?=3D
+ =3D?iso-8859-9?Q?bFJwbn0NiMaBi4wMgXUFfTaOkFJIze9nIeyHBHWhRq8N5gjPUNueQfsHD=
+F?=3D
+ =3D?iso-8859-9?Q?ZgUs1RHxpx0q0KLzxKbt1RlCBPes1ZN0HsUrTK7XAy+7Gu3rKx3pBYTCn=
+A?=3D
+ =3D?iso-8859-9?Q?3y1pfxxAHLNa5MG2jEcPfXpwaNQQjHW8WV+QwdqlQeAalor36+GkJ9FTf=
+A?=3D
+ =3D?iso-8859-9?Q?ogvPyyuDYelPgVWGg+/pdO4Gtf+Y1mnXDshGlDRHuMcN1ZrC06RU9O1N3=
+2?=3D
+ =3D?iso-8859-9?Q?WwR5IAfRrHYx8bwOFDG4/1qS/UizRzLhbKYtsQ4MrjKnznQqVUl0OdWij=
+C?=3D
+ =3D?iso-8859-9?Q?wjpsPrchqzLe/DWJMFM/bD8TF7M8gS+C/iyU0fbyJLkx9V6Npjr1ooVVm=
+P?=3D
+ =3D?iso-8859-9?Q?Ym1gamsQS08pudXeMmGpbVf6rK1LNMXcrNBOzn1IT1PFDRuQHZ/tWwNSj=
+i?=3D
+ =3D?iso-8859-9?Q?1fezE7YqK4sGLYcvgutPq9PSSgOWnuLQbRP4iL+Zl9ND9oOH88N37j7RL=
+/?=3D
+ =3D?iso-8859-9?Q?OOaV6Mo0V92Zltquq1dUZq+pTtKpHIZC0OjrBeILWWmEi7a5CR+uw0suc=
+F?=3D
+ =3D?iso-8859-9?Q?vpgMBRr0IMD30h0aBFPxyaE29sSh8eNoFZwLWrdadMmslVMHRWFj9ddGx=
+o?=3D
+ =3D?iso-8859-9?Q?HGVhIR852dwGF+z263fuVuhomQgMiK2V4SjL0Wt4pnfI7xIiRpT5d7uYj=
+T?=3D
+ =3D?iso-8859-9?Q?RMHFLbhieJdkfppyResQxU2poPI7rSeM2d69FobOitsnz9hJi3uTjcY+2=
+d?=3D
+ =3D?iso-8859-9?Q?5Ku1UOHb/yigV2KlVoR7g1j2x5RJbOAtIU4gXmM1R4p1Urxb4CstqQ3d4=
+z?=3D
+ =3D?iso-8859-9?Q?U97KJb9VEnGE3+UeaZyCYnrMlaK7XdF2cwxPpErYl572ucIZOA6EvAwsD=
+G?=3D
+ =3D?iso-8859-9?Q?vm1Q5jubSF4ansxp4cLqh9pUsWgyXom2ts87EuZeJS3tBgD+sA+IXf4c1=
+o?=3D
+ =3D?iso-8859-9?Q?0H8/esEWjS1vp+jqtGV3KXnEpaXfHTimYYh3JIjBK9u7Pl1pq4DElcnOo=
+k?=3D
+ =3D?iso-8859-9?Q?2kA3DXgN7aq2KbzXyTDOGOXoyxyhsDyCBfwUy5pUI+v42Kb65RFDQ6zq/=
+P?=3D
+ =3D?iso-8859-9?Q?USSrCk0nL2lZpj8xCHVIGxAIDcNNPby8J0s5PFe4bagg9RQeAt1Gk4sqQ=
+a?=3D
+ =3D?iso-8859-9?Q?8KKWIaEjVvTY0NiXqx9HBD3BwW1ofxJea+UXgR6tEwdPTHyd9zAP+tLnu=
+e?=3D
+ =3D?iso-8859-9?Q?QYY1UNmlA/IPIgUKknbg=3D3D=3D3D?=3D
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 9AzFry1pD0X3rdLwYCED+NmlQt42Ox0R0iY3c=
+vAbQM/E6TSrINX/wUQik3ZGQahU680fMlrc8MHTNNlJCQhQnSjwwZf0bNiJXPuVByun3Hg4gWQh=
+GBBO8Vqz75Opw9vR/sAT3B/DfwcseZF5tmygKkrASvrQquiq8AmYr8q8SL+SS6nMZf+kRZRXUy8=
+hArFCHBk+8c2QrfvaZTOnfDIucz2aqVvy2oRbg6wDxBizrs0NT7k+1nCc6hZjHYhBGDhhiqrzHP=
+rQMkIkPA0Yj8IWH28707U8PpSe3M+fP6oDJ8ngNxPNBp4bDF7I30O3ECsC
+Content-Type: multipart/alternative;
+        boundary=3D"_000_093411c04c59483e843e440f75ff38c8AM9P193MB0821EURP1=
+93PRO_"
+MIME-Version: 1.0
+X-OriginatorOrg: sct-15-20-8534-15-msonline-outlook-d0dd6.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9P193MB0821.EURP193.PROD.OUTLOOK.CO=
+M
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000=
+-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04f81f14-ac9d-4149-d1ef-08dde=
+b3e1afd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2025 23:03:32.8725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000=
+-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P193MB2555
+
+
+--bf8bd791-23f6-40a7-8245-49e85a108b7b
+Content-Type: text/html; charset="iso-8859-3"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<Head></head><body>
+<p><b><font color=3D"#000066" size=3D"3" face=3D"Arial">mx.google.com rejec=
+ted your message to the following email addresses:</font></b></p>
+<font color=3D"#000000" size=3D"2" face=3D"Tahoma"><p><a href=3D"mailto:sx1=
+300624@steanne-stlouis.fr">sx1300624@steanne-stlouis.fr (sx1300624@steanne-=
+stlouis.fr)</a><br>
+</font>
+<font color=3D"#000000" size=3D"3" face=3D"Arial">There's a problem with th=
+e recipient's mailbox. Please try resending your message. If the problem co=
+ntinues, please contact your email admin.<br>
+</font>
+<font color=3D"#000000" size=3D"2" face=3D"Tahoma"><br>
+
+<p><b>mx.google.com gave this error:<br>
+The user you are trying to contact is receiving mail at a rate that prevent=
+s additional messages from being delivered. For more information, go to  ht=
+tps://support.google.com/mail/?p=3DReceivingRatePerm 00721157ae682-723a82c4=
+e54si28694937b3.108 - gsmtp <br>
+</b></p>
+</p>
+</font>
+<br><br><br><br><br><br>
+<font color=3D"#808080" size=3D"2" face=3D"Tahoma"><p><b>Diagnostic informa=
+tion for administrators:</b></p>
+<p>Generating server: VI0P193MB2555.EURP193.PROD.OUTLOOK.COM<br>
+Total retry attempts: 2</p>
+<p>sx1300624@steanne-stlouis.fr<br>
+mx.google.com<br>
+Remote server  returned '550-5.2.1 The user you are trying to contact is re=
+ceiving mail at a rate that
+550-5.2.1 prevents additional messages from being delivered. For more
+550-5.2.1 information, go to
+550 5.2.1  https://support.google.com/mail/?p=3DReceivingRatePerm 00721157a=
+e682-723a82c4e54si28694937b3.108 - gsmtp'<br>
+</p>
+<p>Original message headers:</p>
+<pre>ARC-Seal: i=3D1; a=3Drsa-sha256; s=3Darcselector10001; d=3Dmicrosoft.c=
+om; cv=3Dnone;
+ b=3DaOta3RcsQmnUXIoeLzfJwsAEjsVRZnLnubmWop2iROpqyymKlCy3nLOmLTqnw4LS8ssdtC=
+lGo8e7ENjqanj9VdxWvgFDdGJrj9vpZN4E/O7b7GC0wyTU2se+878GeKEgAwzBq8I0yW/f1OIgB=
+tPFI7Y0X5bkD2A0Zqb76E5z2Jwe3bemKZFgUe5JaSZwLmIEzRO2FPqEHtvootKXv4KvBEHM6B1b=
+myGS8VJ0Q0yUxIJ1WZgXn1gVFmCnEnZlTh4Jkkn8lVHunK85dcs+pFJezZqG4I6hXeOJvrq7tmg=
+FgtKL9ExdfHuU1a7Xbwkb/LdEuLcZS55fRNZ9AM+Y0xVQqA=3D=3D
+ARC-Message-Signature: i=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dmicr=
+osoft.com;
+ s=3Darcselector10001;
+ h=3DFrom:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-A=
+ntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Ex=
+change-AntiSpam-MessageData-1;
+ bh=3DaQAgiqnTwY1/vwoPeI1xno5aAe7Q0msOrZdmb1zj/Ns=3D;
+ b=3DbyY3JiK7zEHOhF+1iRzHXdQpNW1dV8XLb0IIxAnQYM99RlO3mb94PQAmfPeRWFsDCszsZC=
+cPnxDG+TzlzsxHhqROKahKR7DQKlhtmco6924iSsP2XBEuOBppIDFCxvIIq0hBX3tgPWYxGQN8S=
+tgJul2S4/ksGcgzM0PdMSg/rUiGNYdOqClOf9E7hjqQE2FiTq2YHR+KjH7oU+ixef0PQ6m/JZ5G=
+ZVRJO3j7NUsg/kvRcMP+G1bVKs/JJd9WDVMoZSVBBunVn2zDZYPSquI1uzm6D7/Uar8arrZKow2=
+/1LyHpAUy0Fh2phH5dTi/yZAp91+n+zdjdNnqLFUHFNZ2iA=3D=3D
+ARC-Authentication-Results: i=3D1; mx.microsoft.com 1; spf=3Dnone; dmarc=3D=
+none;
+ dkim=3Dnone; arc=3Dnone
+DKIM-Signature: v=3D1; a=3Drsa-sha256; c=3Drelaxed/relaxed; d=3Dhotmail.com=
+;
+ s=3Dselector1;
+ h=3DFrom:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-S=
+enderADCheck;
+ bh=3DaQAgiqnTwY1/vwoPeI1xno5aAe7Q0msOrZdmb1zj/Ns=3D;
+ b=3DcYlgqEfz4nMnBhipVPqqLo5Ofvain4rznVq6J1wagaNCikghg46nj3LTlGlFpFQU4VPpI5=
+d95Swvun2HnkbWI/d1eYyuWKdqwsiBv14MuMsAGBuV7+1YzR1KmHjX1obBz9Q4QSWR5oaNODek/=
+mGKkSg19eQXszOX5To5/yv3BzUfVP45FLxnbVkmmvN8b/HXEVAmtqySboeJOGTtfknr/wzBl2dx=
+hmHkPJ99A5uYFrRJJvlWoBzmFEmYRbKaG3p/7Ju2nj9AFccMbJd8A/YtJXQ5YoRIZaGneGuvQuy=
+/4VNp76CAl3Sy7TKc71oI8Hx2iajWAgfBzwlzO2Hx3GgKjQ=3D=3D
+Received: from AM9P193MB0821.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:1fb::1=
+2)
+ by VI0P193MB2555.EURP193.PROD.OUTLOOK.COM (2603:10a6:800:258::16) with
+ Microsoft SMTP Server (version=3DTLS1_2,
+ cipher=3DTLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Wed, 3 S=
+ep
+ 2025 23:03:33 +0000
+Received: from AM9P193MB0821.EURP193.PROD.OUTLOOK.COM ([::1]) by
+ AM9P193MB0821.EURP193.PROD.OUTLOOK.COM ([fe80::3fb6:be49:acad:6178%4]) wit=
+h
+ Microsoft SMTP Server id 15.20.9073.026; Wed, 3 Sep 2025 23:03:32 +0000
+From: =3D?iso-8859-9?Q?orhan_k=3DFDl=3DFD=3DE7?=3D &lt;johndoe@hotmail.c=
+om&gt;
+To: &quot;sx1300624@steanne-stlouis.fr&quot; &lt;sx1300624@steanne-stlouis.=
+fr&gt;
+Subject: =3D?iso-8859-9?Q?=3DDDLT:_16xtube.web_Giri=3DFE_Adresimiz!?=3D
+Thread-Topic: =3D?iso-8859-9?Q?16xtube.web_Giri=3DFE_Adresimiz!?=3D
+Thread-Index: AQHcHSb26n2oXRLRG0m+d6ACuqUodrSCE6Ic
+Date: Wed, 3 Sep 2025 23:03:32 +0000
+Message-ID: &lt;093411c04c59483e843e440f75ff38c8@AM9P193MB0821.EURP193.PROD=
+.OUTLOOK.COM&gt;
+References: &lt;c27335e4586d69311bb4668e9dc70bd5@claviron.app&gt;
+In-Reply-To: &lt;c27335e4586d69311bb4668e9dc70bd5@claviron.app&gt;
+X-MS-Has-Attach:
+X-MS-Exchange-Inbox-Rules-Loop: johndoe@hotmail.com
+X-MS-TNEF-Correlator:
+x-ms-exchange-parent-message-id: &lt;c27335e4586d69311bb4668e9dc70bd5@live7=
+77.net&gt;
+auto-submitted: auto-generated
+x-ms-exchange-generated-message-source: Mailbox Rules Agent
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9P193MB0821:EE_|VI0P193MB2555:EE_
+x-ms-office365-filtering-correlation-id: 04f81f14-ac9d-4149-d1ef-08ddeb3e1a=
+fd
+x-microsoft-antispam: BCL:0;ARA:14566002|13031999003|12050799012|9400799033=
+|31061999003|8022599003|8060799015|461199028|19110799012|440099028|34121990=
+25|10035399007|102099032|26104999006;
+x-microsoft-antispam-message-info: =3D?iso-8859-9?Q?W+UvGvEBfj4B1cWdqqLNCEp=
+yBgfvhbO5OBtz2KusCRFMB/Jl7YMEg7cgoY?=3D
+ =3D?iso-8859-9?Q?zUEWlr0MhTRvuN8wNoOo9y5N4hnp0tWu2bos/EmBFRFzoF78ZUeMP0fpB=
+I?=3D
+ =3D?iso-8859-9?Q?bFJwbn0NiMaBi4wMgXUFfTaOkFJIze9nIeyHBHWhRq8N5gjPUNueQfsHD=
+F?=3D
+ =3D?iso-8859-9?Q?ZgUs1RHxpx0q0KLzxKbt1RlCBPes1ZN0HsUrTK7XAy+7Gu3rKx3pBYTCn=
+A?=3D
+ =3D?iso-8859-9?Q?3y1pfxxAHLNa5MG2jEcPfXpwaNQQjHW8WV+QwdqlQeAalor36+GkJ9FTf=
+A?=3D
+ =3D?iso-8859-9?Q?ogvPyyuDYelPgVWGg+/pdO4Gtf+Y1mnXDshGlDRHuMcN1ZrC06RU9O1N3=
+2?=3D
+ =3D?iso-8859-9?Q?WwR5IAfRrHYx8bwOFDG4/1qS/UizRzLhbKYtsQ4MrjKnznQqVUl0OdWij=
+C?=3D
+ =3D?iso-8859-9?Q?wjpsPrchqzLe/DWJMFM/bD8TF7M8gS+C/iyU0fbyJLkx9V6Npjr1ooVVm=
+P?=3D
+ =3D?iso-8859-9?Q?Ym1gamsQS08pudXeMmGpbVf6rK1LNMXcrNBOzn1IT1PFDRuQHZ/tWwNSj=
+i?=3D
+ =3D?iso-8859-9?Q?1fezE7YqK4sGLYcvgutPq9PSSgOWnuLQbRP4iL+Zl9ND9oOH88N37j7RL=
+/?=3D
+ =3D?iso-8859-9?Q?OOaV6Mo0V92Zltquq1dUZq+pTtKpHIZC0OjrBeILWWmEi7a5CR+uw0suc=
+F?=3D
+ =3D?iso-8859-9?Q?vpgMBRr0IMD30h0aBFPxyaE29sSh8eNoFZwLWrdadMmslVMHRWFj9ddGx=
+o?=3D
+ =3D?iso-8859-9?Q?HGVhIR852dwGF+z263fuVuhomQgMiK2V4SjL0Wt4pnfI7xIiRpT5d7uYj=
+T?=3D
+ =3D?iso-8859-9?Q?RMHFLbhieJdkfppyResQxU2poPI7rSeM2d69FobOitsnz9hJi3uTjcY+2=
+d?=3D
+ =3D?iso-8859-9?Q?5Ku1UOHb/yigV2KlVoR7g1j2x5RJbOAtIU4gXmM1R4p1Urxb4CstqQ3d4=
+z?=3D
+ =3D?iso-8859-9?Q?U97KJb9VEnGE3+UeaZyCYnrMlaK7XdF2cwxPpErYl572ucIZOA6EvAwsD=
+G?=3D
+ =3D?iso-8859-9?Q?vm1Q5jubSF4ansxp4cLqh9pUsWgyXom2ts87EuZeJS3tBgD+sA+IXf4c1=
+o?=3D
+ =3D?iso-8859-9?Q?0H8/esEWjS1vp+jqtGV3KXnEpaXfHTimYYh3JIjBK9u7Pl1pq4DElcnOo=
+k?=3D
+ =3D?iso-8859-9?Q?2kA3DXgN7aq2KbzXyTDOGOXoyxyhsDyCBfwUy5pUI+v42Kb65RFDQ6zq/=
+P?=3D
+ =3D?iso-8859-9?Q?USSrCk0nL2lZpj8xCHVIGxAIDcNNPby8J0s5PFe4bagg9RQeAt1Gk4sqQ=
+a?=3D
+ =3D?iso-8859-9?Q?8KKWIaEjVvTY0NiXqx9HBD3BwW1ofxJea+UXgR6tEwdPTHyd9zAP+tLnu=
+e?=3D
+ =3D?iso-8859-9?Q?QYY1UNmlA/IPIgUKknbg=3D3D=3D3D?=3D
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 9AzFry1pD0X3rdLwYCED+NmlQt42Ox0R0iY3c=
+vAbQM/E6TSrINX/wUQik3ZGQahU680fMlrc8MHTNNlJCQhQnSjwwZf0bNiJXPuVByun3Hg4gWQh=
+GBBO8Vqz75Opw9vR/sAT3B/DfwcseZF5tmygKkrASvrQquiq8AmYr8q8SL+SS6nMZf+kRZRXUy8=
+hArFCHBk+8c2QrfvaZTOnfDIucz2aqVvy2oRbg6wDxBizrs0NT7k+1nCc6hZjHYhBGDhhiqrzHP=
+rQMkIkPA0Yj8IWH28707U8PpSe3M+fP6oDJ8ngNxPNBp4bDF7I30O3ECsC
+Content-Type: multipart/alternative;
+	boundary=3D&quot;_000_093411c04c59483e843e440f75ff38c8AM9P193MB0821EURP193=
+PRO_&quot;
+MIME-Version: 1.0
+X-OriginatorOrg: sct-15-20-8534-15-msonline-outlook-d0dd6.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9P193MB0821.EURP193.PROD.OUTLOOK.CO=
+M
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000=
+-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04f81f14-ac9d-4149-d1ef-08dde=
+b3e1afd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2025 23:03:32.8725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000=
+-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P193MB2555
+</pre>
+</font>
+</body>
+</html>=
+
+--bf8bd791-23f6-40a7-8245-49e85a108b7b--
+
+--b2634995-f988-4297-b8f7-648c71d0b657
+Content-Type: message/delivery-status
+
+Reporting-MTA: dns;VI0P193MB2555.EURP193.PROD.OUTLOOK.COM
+Received-From-MTA: dns;AM9P193MB0821.EURP193.PROD.OUTLOOK.COM
+Arrival-Date: Wed, 3 Sep 2025 23:03:33 +0000
+
+Final-Recipient: rfc822;sx1300624@steanne-stlouis.fr
+Action: failed
+Status: 5.2.1
+Diagnostic-Code: smtp;550-5.2.1 The user you are trying to contact is receiving mail at a rate that
+ 550-5.2.1 prevents additional messages from being delivered. For more
+ 550-5.2.1 information, go to
+ 550 5.2.1  https://support.google.com/mail/?p=ReceivingRatePerm 00721157ae682-723a82c4e54si28694937b3.108 - gsmtp
+Remote-MTA: dns;mx.google.com
+X-Display-Name: sx1300624@steanne-stlouis.fr
+
+
+--b2634995-f988-4297-b8f7-648c71d0b657
+Content-Type: message/rfc822
+
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aOta3RcsQmnUXIoeLzfJwsAEjsVRZnLnubmWop2iROpqyymKlCy3nLOmLTqnw4LS8ssdtClGo8e7ENjqanj9VdxWvgFDdGJrj9vpZN4E/O7b7GC0wyTU2se+878GeKEgAwzBq8I0yW/f1OIgBtPFI7Y0X5bkD2A0Zqb76E5z2Jwe3bemKZFgUe5JaSZwLmIEzRO2FPqEHtvootKXv4KvBEHM6B1bmyGS8VJ0Q0yUxIJ1WZgXn1gVFmCnEnZlTh4Jkkn8lVHunK85dcs+pFJezZqG4I6hXeOJvrq7tmgFgtKL9ExdfHuU1a7Xbwkb/LdEuLcZS55fRNZ9AM+Y0xVQqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aQAgiqnTwY1/vwoPeI1xno5aAe7Q0msOrZdmb1zj/Ns=;
+ b=byY3JiK7zEHOhF+1iRzHXdQpNW1dV8XLb0IIxAnQYM99RlO3mb94PQAmfPeRWFsDCszsZCcPnxDG+TzlzsxHhqROKahKR7DQKlhtmco6924iSsP2XBEuOBppIDFCxvIIq0hBX3tgPWYxGQN8StgJul2S4/ksGcgzM0PdMSg/rUiGNYdOqClOf9E7hjqQE2FiTq2YHR+KjH7oU+ixef0PQ6m/JZ5GZVRJO3j7NUsg/kvRcMP+G1bVKs/JJd9WDVMoZSVBBunVn2zDZYPSquI1uzm6D7/Uar8arrZKow2/1LyHpAUy0Fh2phH5dTi/yZAp91+n+zdjdNnqLFUHFNZ2iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aQAgiqnTwY1/vwoPeI1xno5aAe7Q0msOrZdmb1zj/Ns=;
+ b=cYlgqEfz4nMnBhipVPqqLo5Ofvain4rznVq6J1wagaNCikghg46nj3LTlGlFpFQU4VPpI5d95Swvun2HnkbWI/d1eYyuWKdqwsiBv14MuMsAGBuV7+1YzR1KmHjX1obBz9Q4QSWR5oaNODek/mGKkSg19eQXszOX5To5/yv3BzUfVP45FLxnbVkmmvN8b/HXEVAmtqySboeJOGTtfknr/wzBl2dxhmHkPJ99A5uYFrRJJvlWoBzmFEmYRbKaG3p/7Ju2nj9AFccMbJd8A/YtJXQ5YoRIZaGneGuvQuy/4VNp76CAl3Sy7TKc71oI8Hx2iajWAgfBzwlzO2Hx3GgKjQ==
+Received: from AM9P193MB0821.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:1fb::12)
+ by VI0P193MB2555.EURP193.PROD.OUTLOOK.COM (2603:10a6:800:258::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.25; Wed, 3 Sep
+ 2025 23:03:33 +0000
+Received: from AM9P193MB0821.EURP193.PROD.OUTLOOK.COM ([::1]) by
+ AM9P193MB0821.EURP193.PROD.OUTLOOK.COM ([fe80::3fb6:be49:acad:6178%4]) with
+ Microsoft SMTP Server id 15.20.9073.026; Wed, 3 Sep 2025 23:03:32 +0000
+From: =?iso-8859-9?Q?orhan_k=FDl=FD=E7?= <johndoe@hotmail.com>
+To: "sx1300624@steanne-stlouis.fr" <sx1300624@steanne-stlouis.fr>
+Subject: =?iso-8859-9?Q?=DDLT:_16xtube.web_Giri=FE_Adresimiz!?=
+Thread-Topic: =?iso-8859-9?Q?16xtube.web_Giri=FE_Adresimiz!?=
+Thread-Index: AQHcHSb26n2oXRLRG0m+d6ACuqUodrSCE6Ic
+Date: Wed, 3 Sep 2025 23:03:32 +0000
+Message-ID: <093411c04c59483e843e440f75ff38c8@AM9P193MB0821.EURP193.PROD.OUTLOOK.COM>
+References: <c27335e4586d69311bb4668e9dc70bd5@claviron.app>
+In-Reply-To: <c27335e4586d69311bb4668e9dc70bd5@claviron.app>
+X-MS-Has-Attach:
+X-MS-Exchange-Inbox-Rules-Loop: johndoe@hotmail.com
+X-MS-TNEF-Correlator:
+x-ms-exchange-parent-message-id: <c27335e4586d69311bb4668e9dc70bd5@claviron.app>
+auto-submitted: auto-generated
+x-ms-exchange-generated-message-source: Mailbox Rules Agent
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9P193MB0821:EE_|VI0P193MB2555:EE_
+x-ms-office365-filtering-correlation-id: 04f81f14-ac9d-4149-d1ef-08ddeb3e1afd
+x-microsoft-antispam: BCL:0;ARA:14566002|13031999003|12050799012|9400799033|31061999003|8022599003|8060799015|461199028|19110799012|440099028|3412199025|10035399007|102099032|26104999006;
+x-microsoft-antispam-message-info: =?iso-8859-9?Q?W+UvGvEBfj4B1cWdqqLNCEpyBgfvhbO5OBtz2KusCRFMB/Jl7YMEg7cgoY?=
+ =?iso-8859-9?Q?zUEWlr0MhTRvuN8wNoOo9y5N4hnp0tWu2bos/EmBFRFzoF78ZUeMP0fpBI?=
+ =?iso-8859-9?Q?bFJwbn0NiMaBi4wMgXUFfTaOkFJIze9nIeyHBHWhRq8N5gjPUNueQfsHDF?=
+ =?iso-8859-9?Q?ZgUs1RHxpx0q0KLzxKbt1RlCBPes1ZN0HsUrTK7XAy+7Gu3rKx3pBYTCnA?=
+ =?iso-8859-9?Q?3y1pfxxAHLNa5MG2jEcPfXpwaNQQjHW8WV+QwdqlQeAalor36+GkJ9FTfA?=
+ =?iso-8859-9?Q?ogvPyyuDYelPgVWGg+/pdO4Gtf+Y1mnXDshGlDRHuMcN1ZrC06RU9O1N32?=
+ =?iso-8859-9?Q?WwR5IAfRrHYx8bwOFDG4/1qS/UizRzLhbKYtsQ4MrjKnznQqVUl0OdWijC?=
+ =?iso-8859-9?Q?wjpsPrchqzLe/DWJMFM/bD8TF7M8gS+C/iyU0fbyJLkx9V6Npjr1ooVVmP?=
+ =?iso-8859-9?Q?Ym1gamsQS08pudXeMmGpbVf6rK1LNMXcrNBOzn1IT1PFDRuQHZ/tWwNSji?=
+ =?iso-8859-9?Q?1fezE7YqK4sGLYcvgutPq9PSSgOWnuLQbRP4iL+Zl9ND9oOH88N37j7RL/?=
+ =?iso-8859-9?Q?OOaV6Mo0V92Zltquq1dUZq+pTtKpHIZC0OjrBeILWWmEi7a5CR+uw0sucF?=
+ =?iso-8859-9?Q?vpgMBRr0IMD30h0aBFPxyaE29sSh8eNoFZwLWrdadMmslVMHRWFj9ddGxo?=
+ =?iso-8859-9?Q?HGVhIR852dwGF+z263fuVuhomQgMiK2V4SjL0Wt4pnfI7xIiRpT5d7uYjT?=
+ =?iso-8859-9?Q?RMHFLbhieJdkfppyResQxU2poPI7rSeM2d69FobOitsnz9hJi3uTjcY+2d?=
+ =?iso-8859-9?Q?5Ku1UOHb/yigV2KlVoR7g1j2x5RJbOAtIU4gXmM1R4p1Urxb4CstqQ3d4z?=
+ =?iso-8859-9?Q?U97KJb9VEnGE3+UeaZyCYnrMlaK7XdF2cwxPpErYl572ucIZOA6EvAwsDG?=
+ =?iso-8859-9?Q?vm1Q5jubSF4ansxp4cLqh9pUsWgyXom2ts87EuZeJS3tBgD+sA+IXf4c1o?=
+ =?iso-8859-9?Q?0H8/esEWjS1vp+jqtGV3KXnEpaXfHTimYYh3JIjBK9u7Pl1pq4DElcnOok?=
+ =?iso-8859-9?Q?2kA3DXgN7aq2KbzXyTDOGOXoyxyhsDyCBfwUy5pUI+v42Kb65RFDQ6zq/P?=
+ =?iso-8859-9?Q?USSrCk0nL2lZpj8xCHVIGxAIDcNNPby8J0s5PFe4bagg9RQeAt1Gk4sqQa?=
+ =?iso-8859-9?Q?8KKWIaEjVvTY0NiXqx9HBD3BwW1ofxJea+UXgR6tEwdPTHyd9zAP+tLnue?=
+ =?iso-8859-9?Q?QYY1UNmlA/IPIgUKknbg=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 9AzFry1pD0X3rdLwYCED+NmlQt42Ox0R0iY3cvAbQM/E6TSrINX/wUQik3ZGQahU680fMlrc8MHTNNlJCQhQnSjwwZf0bNiJXPuVByun3Hg4gWQhGBBO8Vqz75Opw9vR/sAT3B/DfwcseZF5tmygKkrASvrQquiq8AmYr8q8SL+SS6nMZf+kRZRXUy8hArFCHBk+8c2QrfvaZTOnfDIucz2aqVvy2oRbg6wDxBizrs0NT7k+1nCc6hZjHYhBGDhhiqrzHPrQMkIkPA0Yj8IWH28707U8PpSe3M+fP6oDJ8ngNxPNBp4bDF7I30O3ECsC
+Content-Type: multipart/alternative;
+	boundary="_000_093411c04c59483e843e440f75ff38c8AM9P193MB0821EURP193PRO_"
+MIME-Version: 1.0
+X-OriginatorOrg: sct-15-20-8534-15-msonline-outlook-d0dd6.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9P193MB0821.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04f81f14-ac9d-4149-d1ef-08ddeb3e1afd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2025 23:03:32.8725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P193MB2555
+
+--_000_093411c04c59483e843e440f75ff38c8AM9P193MB0821EURP193PRO_
+Content-Type: text/plain; charset="iso-8859-9"
+Content-Transfer-Encoding: quoted-printable
+
+
+________________________________
+G=F6nderen: claviron.app <noreply@claviron.app>
+G=F6nderilme tarihi: 4 Eyl=FCl 2025 Per=FEembe 02:03:23 (UTC+03:00) Istanbu=
+l
+Kime: johndoe@hotmail.com <johndoe@hotmail.com>
+Konu: Mesaj!
+
+
+Giri=FE
+
+
+
+
+
+
+<tbody>
+
+</body>
+</html>
+
+--_000_093411c04c59483e843e440f75ff38c8AM9P193MB0821EURP193PRO_--
+
+--b2634995-f988-4297-b8f7-648c71d0b657--

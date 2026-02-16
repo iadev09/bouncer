@@ -1,0 +1,34 @@
+# 🚀 Genel Formatlama Kuralları for nightly edition
+#
+# rustup run nightly cargo fmt
+#
+# 🚀 Genel Ayarlar
+edition = "2024"                # Rust 2024 edition
+max_width = 80                 # Satır uzunluğu sınırı
+#use_small_heuristics = "Off"     # Küçük kod bloklarını tek satırda tutmaya çalış
+#use_small_heuristics = "Default"     # Küçük kod bloklarını tek satırda tutmaya çalış
+use_small_heuristics = "Max"     # Küçük kod bloklarını tek satırda tutmaya çalış
+hard_tabs = false               # Boşluk yerine tab kullanımı (false: boşluk)
+tab_spaces = 4                  # Bir tab = 4 boşluk
+
+# 📌 Fonksiyon ve Parametreler
+fn_params_layout = "Vertical"  # Place each function parameter on a new line if the line is too long
+#where_single_line = false        # `where` ifadelerini tek satıra sığdırma
+# 🔗 Import'ları Sıralama
+
+
+# 🎨 Kod Düzeni
+reorder_impl_items = true        # `impl` içindeki öğeleri sıralı hale getir
+trailing_comma = "Never"      # Son satırlarda virgül ekleme düzeni
+force_explicit_abi = true        # Harici fonksiyon çağırmalarında ABI belirt
+wrap_comments = false             # Yorum satırlarını otomatik olarak satır sınırına göre sar
+
+# 🏗 Struct ve Enum’lar
+struct_lit_width = 80            # Struct literal'lerinde satır genişliği limiti
+struct_field_align_threshold = 0  # Struct alanlarını hizalama eşiği
+enum_discrim_align_threshold = 0  # Enum değerlerini hizalama eşiği
+
+#imports_granularity = "Crate"    # `use` ifadelerini crate bazında grupla
+imports_granularity = "Module"
+group_imports = "StdExternalCrate"  # Import'ları sıralı hale getir
+reorder_imports = true  # Import'ları alfabetik olarak sırala

@@ -1,0 +1,8 @@
+listen_udp: "127.0.0.1:5140"
+server: "127.0.0.1:2147"
+source: "mail-01"
+queue_capacity: 4096
+connect_timeout_secs: 5
+io_timeout_secs: 10
+heartbeat_secs: 30
+mapping_ttl_secs: 86400

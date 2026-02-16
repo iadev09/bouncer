@@ -1,0 +1,20 @@
+[Unit]
+Description=Bouncer Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=postmaster
+Group=postmaster
+WorkingDirectory=/home/postmaster
+Environment="BOUNCER_LOG=bouncer_server=info,notify=warn,tokio=warn"
+Environment="BOUNCER_CONFIG_PATH=/home/postmaster/bouncer.yaml"
+ExecStart=/home/postmaster/bin/bouncer-server
+Restart=on-failure
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

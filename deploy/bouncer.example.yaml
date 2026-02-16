@@ -1,0 +1,19 @@
+listen: "0.0.0.0:2147"
+spool: "./storage/spool/bouncer"
+worker_concurrency: 4
+process_queue_per_worker: 1024
+incoming_scan_secs: 60
+database_url: "mysql://bouncer@localhost/test_db?socket=/var/lib/mysql/mysql.sock"
+imap:
+  host: "mail.bouncer.app"
+  port: 993
+  user: "noreply@bouncer.app"
+  pass: "password"
+  mailbox: "INBOX"
+  poll_secs: 5
+  connect_timeout_secs: 10
+  max_messages_per_poll: 20
+  # Optional IMAP history window. null disables date filtering.
+  # Example: "3d" only checks newer messages from the last 3 days.
+  max_history: 1y
+  mark_seen_if_not_exist: true
