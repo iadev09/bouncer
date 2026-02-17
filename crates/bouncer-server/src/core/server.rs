@@ -1,5 +1,7 @@
+use std::io::ErrorKind;
+
 use anyhow::{Context, Result};
-use bouncer_proto::{ACK, decode_header_json, read_frame_async};
+use bouncer_proto::{ACK, ProtoError, decode_header_json, read_frame_async};
 use tokio::io::AsyncWriteExt;
 use tokio::net::{TcpListener, TcpStream};
 use tracing::{info, trace, warn};
@@ -56,62 +58,80 @@ async fn handle_client(
     mut stream: TcpStream,
     state: AppState
 ) -> Result<()> {
-    let (header_bytes, body) =
-        read_frame_async(&mut stream, MAX_HEADER_LEN, MAX_BODY_LEN)
+    loop {
+        let (header_bytes, body) =
+            match read_frame_async(&mut stream, MAX_HEADER_LEN, MAX_BODY_LEN)
+                .await
+            {
+                Ok(frame) => frame,
+                Err(ProtoError::Io(err))
+                    if matches!(
+                        err.kind(),
+                        ErrorKind::UnexpectedEof
+                            | ErrorKind::ConnectionReset
+                            | ErrorKind::BrokenPipe
+                    ) =>
+                {
+                    trace!("client disconnected: error={}", err);
+                    break;
+                }
+                Err(err) => {
+                    return Err(err).context("failed to read frame");
+                }
+            };
+
+        let header = decode_header_json(&header_bytes)
+            .context("failed to decode header")?;
+
+        if matches!(header.kind.as_deref(), Some("heartbeat" | "register")) {
+            stream.write_all(ACK).await.context("failed to write ACK")?;
+            trace!(
+                "control frame accepted: kind={}, source={}, from={}",
+                header.kind.as_deref().unwrap_or("-"),
+                header.source.as_deref().unwrap_or("-"),
+                header.from
+            );
+            continue;
+        }
+
+        if matches!(header.kind.as_deref(), Some("observer_event")) {
+            let event: ObserverDeliveryEvent = serde_json::from_slice(&body)
+                .context("failed to decode observer event body")?;
+
+            state
+                .db
+                .apply_observer_event(&event)
+                .await
+                .context("failed to apply observer event")?;
+
+            stream.write_all(ACK).await.context("failed to write ACK")?;
+            info!(
+                "observer event accepted: source={}, hash={}, queue_id={}, status_code={}, action={}",
+                header.source.as_deref().unwrap_or("-"),
+                event.hash,
+                event.queue_id,
+                event.status_code,
+                event.action
+            );
+            continue;
+        }
+
+        let written_path = state
+            .spool
+            .enqueue_mail(&body)
             .await
-            .context("failed to read frame")?;
-
-    let header =
-        decode_header_json(&header_bytes).context("failed to decode header")?;
-
-    if matches!(header.kind.as_deref(), Some("heartbeat" | "register")) {
-        stream.write_all(ACK).await.context("failed to write ACK")?;
-        trace!(
-            "control frame accepted: kind={}, source={}, from={}",
-            header.kind.as_deref().unwrap_or("-"),
-            header.source.as_deref().unwrap_or("-"),
-            header.from
-        );
-        return Ok(());
-    }
-
-    if matches!(header.kind.as_deref(), Some("observer_event")) {
-        let event: ObserverDeliveryEvent = serde_json::from_slice(&body)
-            .context("failed to decode observer event body")?;
-
-        state
-            .db
-            .apply_observer_event(&event)
-            .await
-            .context("failed to apply observer event")?;
+            .context("failed to enqueue payload to spool")?;
 
         stream.write_all(ACK).await.context("failed to write ACK")?;
+
         info!(
-            "observer event accepted: source={}, hash={}, queue_id={}, status_code={}, action={}",
-            header.source.as_deref().unwrap_or("-"),
-            event.hash,
-            event.queue_id,
-            event.status_code,
-            event.action
+            "message accepted: bytes={}, path={}, kind={}, source={}",
+            body.len(),
+            written_path.display(),
+            header.kind.as_deref().unwrap_or("mail"),
+            header.source.as_deref().unwrap_or("-")
         );
-        return Ok(());
     }
-
-    let written_path = state
-        .spool
-        .enqueue_mail(&body)
-        .await
-        .context("failed to enqueue payload to spool")?;
-
-    stream.write_all(ACK).await.context("failed to write ACK")?;
-
-    info!(
-        "message accepted: bytes={}, path={}, kind={}, source={}",
-        body.len(),
-        written_path.display(),
-        header.kind.as_deref().unwrap_or("mail"),
-        header.source.as_deref().unwrap_or("-")
-    );
 
     Ok(())
 }
