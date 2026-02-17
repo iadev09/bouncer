@@ -8,6 +8,7 @@ Before=postfix.service
 Type=simple
 User=postmaster
 Group=postmaster
+SupplementaryGroups=systemd-journal
 WorkingDirectory=/home/postmaster
 Environment="JOURNAL_LOG=bouncer_journal=info,tokio=warn"
 Environment="JOURNAL_CONFIG_PATH=/home/servant/etc/journal.yaml"
