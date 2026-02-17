@@ -1,4 +1,4 @@
 
 
 # sends bounce mails to bouncer-server
-bounce-pipe  unix - n n - - pipe flags=FRq user=${APP_USER}:${APP_GROUP} argv=bouncer-client --server 127.0.0.1:2147 -f ${sender} -d ${recipient}
+bounce-notify  unix - n n - - pipe flags=FRq user=postmaster:postmaster argv=/usr/local/bin/bounce-notify --serve [SERVER_ADDR]:2147 --from  ${sender} --to ${recipient} --timeout-secs 2
