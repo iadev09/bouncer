@@ -64,7 +64,7 @@ pub async fn run_publisher(
                         err
                     );
                 } else {
-                    debug!(
+                    info!(
                         "journal event published: hash={}, queue_id={}, smtp_status={}, status_code={}, action={}, recipient={}",
                         event.hash,
                         event.queue_id,
