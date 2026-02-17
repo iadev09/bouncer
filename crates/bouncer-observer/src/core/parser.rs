@@ -1,6 +1,7 @@
 use super::types::{ParsedSyslog, SmtpEvent};
 
 const MAX_DIAGNOSTIC_LEN: usize = 512;
+const RELAY_HANDOFF_HOSTS: &[&str] = &["mxbg.nxmango.com"];
 
 /// Parses one postfix syslog line into either:
 /// - `ParsedSyslog::Cleanup { queue_id, hash }`
@@ -72,13 +73,16 @@ fn parse_smtp_message(message: &str) -> Option<SmtpEvent> {
 
     let recipient = extract_between(detail, "to=<", ">")?.to_string();
     let smtp_status = extract_token(detail, "status=")?.to_ascii_lowercase();
+    let relay_handoff = extract_relay_host(detail)
+        .map(|host| is_relay_handoff_host(&host))
+        .unwrap_or(false);
 
-    let default_status = default_status_code(&smtp_status);
+    let default_status = default_status_code(&smtp_status, relay_handoff);
     let status_code = extract_token(detail, "dsn=")
         .map(ToOwned::to_owned)
         .unwrap_or_else(|| default_status.to_string());
 
-    let action = map_action(&smtp_status).to_string();
+    let action = map_action(&smtp_status, relay_handoff).to_string();
     let diagnostic = build_diagnostic(queue_id, detail);
 
     Some(SmtpEvent {
@@ -120,7 +124,15 @@ fn extract_token<'a>(
     if token_len == 0 { None } else { Some(rem[..token_len].trim()) }
 }
 
-fn map_action(smtp_status: &str) -> &'static str {
+fn map_action(
+    smtp_status: &str,
+    relay_handoff: bool
+) -> &'static str {
+    if smtp_status == "sent" && relay_handoff {
+        // "sent" to an internal relay is not final mailbox delivery yet.
+        return "delayed";
+    }
+
     match smtp_status {
         "sent" => "delivered",
         "deferred" => "delayed",
@@ -129,7 +141,14 @@ fn map_action(smtp_status: &str) -> &'static str {
     }
 }
 
-fn default_status_code(smtp_status: &str) -> &'static str {
+fn default_status_code(
+    smtp_status: &str,
+    relay_handoff: bool
+) -> &'static str {
+    if smtp_status == "sent" && relay_handoff {
+        return "4.0.0";
+    }
+
     match smtp_status {
         "sent" => "2.0.0",
         "deferred" => "4.0.0",
@@ -171,6 +190,25 @@ fn is_queue_id(queue_id: &str) -> bool {
     !queue_id.is_empty()
         && queue_id.len() <= 32
         && queue_id.chars().all(|c| c.is_ascii_alphanumeric())
+}
+
+fn extract_relay_host(detail: &str) -> Option<String> {
+    let marker = "relay=";
+    let start = detail.find(marker)? + marker.len();
+    let rem = &detail[start..];
+
+    let end = rem
+        .find(|c: char| c == '[' || c == ':' || c == ',' || c.is_whitespace())
+        .unwrap_or(rem.len());
+
+    let host = rem[..end].trim().to_ascii_lowercase();
+    if host.is_empty() { None } else { Some(host) }
+}
+
+fn is_relay_handoff_host(host: &str) -> bool {
+    RELAY_HANDOFF_HOSTS
+        .iter()
+        .any(|relay| host.eq_ignore_ascii_case(relay))
 }
 
 /// Normalizes message-id into the tracking hash expected by the app.
