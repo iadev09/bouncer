@@ -4,6 +4,7 @@ members = [
     "crates/bouncer-server",
     "crates/bouncer-client",
     "crates/bouncer-observer",
+    "crates/bouncer-journal",
     "crates/bouncer-tools",
     "crates/bouncer-helpers",
 ]

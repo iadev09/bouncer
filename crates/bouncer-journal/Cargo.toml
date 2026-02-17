@@ -1,0 +1,21 @@
+[package]
+name = "bouncer-journal"
+version = "0.1.0"
+edition = "2024"
+keywords = ["postfix", "email", "bounce", "journal", "systemd"]
+authors = ["developer <iadeveloper@hotmail.com>"]
+description = "Postfix journald observer to correlate queue IDs with Message-IDs and publish delivery events"
+
+[dependencies]
+anyhow.workspace = true
+bouncer-helpers = { path = "../bouncer-helpers" }
+bouncer-proto = { path = "../bouncer-proto", features = ["tokio"] }
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+systemd = "0.10"

@@ -1,0 +1,23 @@
+[Unit]
+Description=Bouncer Journal Observer
+After=network-online.target systemd-journald.service
+Wants=network-online.target
+Before=postfix.service
+
+[Service]
+Type=simple
+User=postmaster
+Group=postmaster
+WorkingDirectory=/home/postmaster
+Environment="JOURNAL_LOG=bouncer_journal=info,tokio=warn"
+Environment="JOURNAL_CONFIG_PATH=/home/servant/etc/journal.yaml"
+ExecStart=/usr/local/bin/bouncer-journal
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=35
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bouncer-journal
+
+[Install]
+WantedBy=multi-user.target

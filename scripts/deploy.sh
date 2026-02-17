@@ -10,11 +10,11 @@ cd "${BASE_DIR}" || exit 1
 
 show_help() {
   cat <<'USAGE'
-Usage: ./scripts/deploy.sh [observer|server|client|all] [debug|release] [target_host]
-Deploy bouncer observer/server/client binaries to a target host.
+Usage: ./scripts/deploy.sh [observer|server|client|journal|all] [debug|release] [target_host]
+Deploy bouncer observer/server/client/journal binaries to a target host.
 
 Parameters:
-  observer|server|client|all  Specific app to deploy (default: all)
+  observer|server|client|journal|all  Specific app to deploy (default: all)
   debug|release               Build mode (default: release)
   target_host                 Target host (default: current hostname)
 
@@ -99,6 +99,11 @@ deploy_client() {
   BUILD_MODE="${BUILD_MODE}" "${DEPLOY_SCRIPT}" "${TARGET_HOST}" "bouncer-client"
 }
 
+deploy_journal() {
+  echo "Deploying bouncer-journal to ${TARGET_HOST} (${BUILD_MODE})"
+  BUILD_MODE="${BUILD_MODE}" "${DEPLOY_SCRIPT}" "${TARGET_HOST}" "bouncer-journal"
+}
+
 deploy_all() {
   echo "Deploying observer, server and client to ${TARGET_HOST} (${BUILD_MODE})"
   deploy_observer
@@ -120,9 +125,12 @@ case "${DEPLOY_TARGET}" in
   client|bouncer-client)
     deploy_client
     ;;
+  journal|bouncer-journal)
+    deploy_journal
+    ;;
   *)
     echo "Error: Unknown deploy target '${DEPLOY_TARGET}'." >&2
-    echo "Valid options: observer, server, client, all" >&2
+    echo "Valid options: observer, server, client, journal, all" >&2
     exit 1
     ;;
 esac
