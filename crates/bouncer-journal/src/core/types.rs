@@ -5,7 +5,7 @@ use serde::Serialize;
 #[derive(Debug, Clone)]
 pub struct QueueEntry {
     pub hash: String,
-    pub updated_at: Instant,
+    pub updated_at: Instant
 }
 
 #[derive(Debug, Clone)]
@@ -15,7 +15,7 @@ pub struct SmtpEvent {
     pub smtp_status: String,
     pub status_code: String,
     pub action: String,
-    pub diagnostic: String,
+    pub diagnostic: String
 }
 
 #[derive(Debug, Clone)]
@@ -26,7 +26,7 @@ pub struct DeliveryEvent {
     pub status_code: String,
     pub action: String,
     pub diagnostic: String,
-    pub smtp_status: String,
+    pub smtp_status: String
 }
 
 #[derive(Debug, Serialize)]
@@ -39,10 +39,10 @@ pub struct DeliveryEventPayload {
     pub action: String,
     pub diagnostic: String,
     pub smtp_status: String,
-    pub observed_at_unix: u64,
+    pub observed_at_unix: u64
 }
 
 pub enum ParsedSyslog {
     Cleanup { queue_id: String, hash: String },
-    Smtp(SmtpEvent),
+    Smtp(SmtpEvent)
 }

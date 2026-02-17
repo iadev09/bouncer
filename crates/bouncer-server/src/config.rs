@@ -28,7 +28,7 @@ impl Config {
         let config_path = parse_config_path_arg(env::args().skip(1))?
             .or_else(resolve_server_config_path)
             .context(
-                "server config path not found (BOUNCER_CONFIG_PATH or bouncer.yaml/bouncer.yml)",
+                "server config path not found (BOUNCER_CONFIG_PATH or bouncer.yaml/bouncer.yaml)",
             )?;
 
         let mut config = load_config_yaml(&config_path)?;
@@ -186,7 +186,7 @@ fn resolve_server_config_path() -> Option<PathBuf> {
             return Some(home_yaml);
         }
 
-        let home_yml = PathBuf::from(home).join("bouncer.yml");
+        let home_yml = PathBuf::from(home).join("bouncer.yaml");
         if home_yml.exists() {
             return Some(home_yml);
         }
@@ -198,14 +198,9 @@ fn resolve_server_config_path() -> Option<PathBuf> {
         return Some(cwd_yaml);
     }
 
-    let cwd_yml = cwd.join("bouncer.yml");
+    let cwd_yml = cwd.join("bouncer.yaml");
     if cwd_yml.exists() {
         return Some(cwd_yml);
-    }
-
-    let legacy_path = cwd.join("Config.yaml");
-    if legacy_path.exists() {
-        return Some(legacy_path);
     }
 
     None

@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use std::time::Duration;
 
 use bouncer_proto::{
-    Header, encode_header_json, read_ack_sync, write_frame_sync,
+    Header, encode_header_json, read_ack_sync, write_frame_sync
 };
 
 const EX_TEMPFAIL: u8 = 75;
@@ -20,7 +20,7 @@ fn main() -> ExitCode {
         Err(err) => {
             let code = match err {
                 ClientError::Usage(_) => EX_USAGE,
-                ClientError::Runtime(_) => EX_TEMPFAIL,
+                ClientError::Runtime(_) => EX_TEMPFAIL
             };
             eprintln!("bouncer-client error: {err}");
             ExitCode::from(code)
@@ -35,7 +35,7 @@ fn run() -> Result<()> {
 
 fn run_with_cli<R: Read>(
     args: Cli,
-    stdin: &mut R,
+    stdin: &mut R
 ) -> Result<()> {
     let body = read_body(stdin, MAX_BODY_BYTES)?;
     let header_bytes = build_header_bytes(&args)?;
@@ -46,7 +46,7 @@ fn run_with_cli<R: Read>(
 
 fn read_body<R: Read>(
     reader: &mut R,
-    max_body_bytes: usize,
+    max_body_bytes: usize
 ) -> Result<Vec<u8>> {
     let mut body = Vec::new();
     reader
@@ -67,7 +67,7 @@ fn build_header_bytes(args: &Cli) -> Result<Vec<u8>> {
         from: args.from.clone(),
         to: args.to.clone(),
         kind: None,
-        source: None,
+        source: None
     };
     let header_bytes = encode_header_json(&header)
         .map_err(|err| runtime_err("failed to serialize header", err))?;
@@ -78,7 +78,7 @@ fn send_frame_and_wait_ack(
     addr: SocketAddr,
     timeout: Duration,
     header_bytes: &[u8],
-    body: &[u8],
+    body: &[u8]
 ) -> Result<()> {
     let mut stream =
         TcpStream::connect_timeout(&addr, timeout).map_err(|err| {
@@ -109,7 +109,7 @@ fn resolve_socket_addr(server: &str) -> Result<SocketAddr> {
         .map_err(|err| {
             runtime_err(
                 format!("failed to resolve server address: {server}"),
-                err,
+                err
             )
         })?
         .next()
@@ -125,13 +125,13 @@ struct Cli {
     server: String,
     from: String,
     to: String,
-    timeout_secs: u64,
+    timeout_secs: u64
 }
 
 impl Cli {
     fn parse<I>(mut args: I) -> Result<Self>
     where
-        I: Iterator<Item = String>,
+        I: Iterator<Item = String>
     {
         let mut server = None;
         let mut from = None;
@@ -146,13 +146,13 @@ impl Cli {
                 "--timeout-secs" => {
                     let raw = args.next().ok_or_else(|| {
                         ClientError::Usage(
-                            "missing value for --timeout-secs".to_string(),
+                            "missing value for --timeout-secs".to_string()
                         )
                     })?;
                     timeout_secs = raw.parse::<u64>().map_err(|_| {
                         ClientError::Usage(
                             "--timeout-secs must be a positive integer"
-                                .to_string(),
+                                .to_string()
                         )
                     })?;
                 }
@@ -173,18 +173,18 @@ impl Cli {
         Ok(Self {
             server: server.ok_or_else(|| {
                 ClientError::Usage(
-                    "missing required argument --server".to_string(),
+                    "missing required argument --server".to_string()
                 )
             })?,
             from: from.ok_or_else(|| {
                 ClientError::Usage(
-                    "missing required argument --from".to_string(),
+                    "missing required argument --from".to_string()
                 )
             })?,
             to: to.ok_or_else(|| {
                 ClientError::Usage("missing required argument --to".to_string())
             })?,
-            timeout_secs,
+            timeout_secs
         })
     }
 }
@@ -192,17 +192,17 @@ impl Cli {
 #[derive(Debug)]
 enum ClientError {
     Usage(String),
-    Runtime(String),
+    Runtime(String)
 }
 
 impl fmt::Display for ClientError {
     fn fmt(
         &self,
-        f: &mut fmt::Formatter<'_>,
+        f: &mut fmt::Formatter<'_>
     ) -> fmt::Result {
         match self {
             ClientError::Usage(msg) => write!(f, "{msg}"),
-            ClientError::Runtime(msg) => write!(f, "{msg}"),
+            ClientError::Runtime(msg) => write!(f, "{msg}")
         }
     }
 }
@@ -211,7 +211,7 @@ impl std::error::Error for ClientError {}
 
 fn runtime_err(
     context: impl Into<String>,
-    err: impl fmt::Display,
+    err: impl fmt::Display
 ) -> ClientError {
     ClientError::Runtime(format!("{}: {err}", context.into()))
 }
@@ -225,7 +225,7 @@ mod tests {
     use bouncer_proto::{ACK, MAGIC, decode_header_json};
 
     use super::{
-        Cli, ClientError, build_header_bytes, read_body, run_with_cli,
+        Cli, ClientError, build_header_bytes, read_body, run_with_cli
     };
 
     #[test]
@@ -256,7 +256,7 @@ mod tests {
                 "--to".to_string(),
                 "bounces@example.com".to_string(),
             ]
-            .into_iter(),
+            .into_iter()
         )
         .expect_err("parse should fail");
 
@@ -264,7 +264,7 @@ mod tests {
             ClientError::Usage(msg) => {
                 assert!(msg.contains("missing required argument --server"));
             }
-            _ => panic!("expected usage error"),
+            _ => panic!("expected usage error")
         }
     }
 
@@ -276,7 +276,7 @@ mod tests {
             ClientError::Runtime(msg) => {
                 assert!(msg.contains("mail body too large: max 5 bytes"));
             }
-            _ => panic!("expected runtime error"),
+            _ => panic!("expected runtime error")
         }
     }
 
@@ -286,7 +286,7 @@ mod tests {
             server: "127.0.0.1:2147".to_string(),
             from: "sender@example.com".to_string(),
             to: "bounces@example.com".to_string(),
-            timeout_secs: 10,
+            timeout_secs: 10
         };
         let encoded = build_header_bytes(&cli).expect("header build");
         let decoded = decode_header_json(&encoded).expect("header decode");
@@ -318,7 +318,7 @@ mod tests {
             server: addr.to_string(),
             from: "sender@example.com".to_string(),
             to: "bounces@example.com".to_string(),
-            timeout_secs: 3,
+            timeout_secs: 3
         };
         let mut stdin = Cursor::new(fixture_bytes());
         run_with_cli(cli, &mut stdin).expect("client run should succeed");
@@ -342,7 +342,7 @@ mod tests {
             server: addr.to_string(),
             from: "sender@example.com".to_string(),
             to: "bounces@example.com".to_string(),
-            timeout_secs: 1,
+            timeout_secs: 1
         };
         let mut stdin = Cursor::new(fixture_bytes());
         let err = run_with_cli(cli, &mut stdin).expect_err("must fail");
@@ -350,7 +350,7 @@ mod tests {
             ClientError::Runtime(msg) => {
                 assert!(msg.contains("invalid/missing ACK from server"));
             }
-            _ => panic!("expected runtime error"),
+            _ => panic!("expected runtime error")
         }
         handle.join().expect("server thread join");
     }
@@ -366,7 +366,7 @@ mod tests {
                 eprintln!("skipping network test: {err}");
                 None
             }
-            Err(err) => panic!("bind test listener failed: {err}"),
+            Err(err) => panic!("bind test listener failed: {err}")
         }
     }
 
@@ -378,7 +378,7 @@ mod tests {
         if magic != MAGIC {
             return Err(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
-                "invalid frame magic",
+                "invalid frame magic"
             ));
         }
 

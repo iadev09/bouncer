@@ -106,9 +106,9 @@ Server config path resolution order:
 - `argv[1]` (optional config path argument)
 - `BOUNCER_CONFIG_PATH`
 - `${HOME}/bouncer.yaml`
-- `${HOME}/bouncer.yml`
+- `${HOME}/bouncer.yaml`
 - `./bouncer.yaml`
-- `./bouncer.yml`
+- `./bouncer.yaml`
 - legacy fallback: `./Config.yaml`
 
 ```yaml
@@ -157,9 +157,9 @@ Observer config path resolution order:
 - `argv[1]` (optional config path argument)
 - `OBSERVER_CONFIG_PATH`
 - `${HOME}/observer.yaml`
-- `${HOME}/observer.yml`
+- `${HOME}/observer.yaml`
 - `./observer.yaml`
-- `./observer.yml`
+- `./observer.yaml`
 
 ```yaml
 listen_udp: "127.0.0.1:5140"

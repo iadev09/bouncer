@@ -28,7 +28,7 @@ pub struct JournalConfig {
     #[serde(default = "default_identifiers")]
     pub identifiers: Vec<String>,
     #[serde(default = "default_seek_tail")]
-    pub seek_tail: bool,
+    pub seek_tail: bool
 }
 
 impl JournalConfig {
@@ -38,7 +38,7 @@ impl JournalConfig {
             .config_path
             .or_else(resolve_journal_config_path)
             .context(
-                "journal config path not found (JOURNAL_CONFIG_PATH or bouncer-journal.yaml/bouncer-journal.yml)",
+                "journal config path not found (JOURNAL_CONFIG_PATH or bouncer-journal.yaml/bouncer-journal.yaml)",
             )?;
 
         let mut config = load_config_yaml(&config_path)?;
@@ -93,36 +93,26 @@ fn resolve_journal_config_path() -> Option<PathBuf> {
     }
 
     if let Some(home) = home_dir() {
-        let home_yaml = home.join("bouncer-journal.yaml");
+        let home_yaml = home.join("journal.yaml");
         if home_yaml.exists() {
             return Some(home_yaml);
         }
 
-        let home_yml = home.join("bouncer-journal.yml");
+        let home_yml = home.join("journal.yaml");
         if home_yml.exists() {
             return Some(home_yml);
         }
 
-        let home_observer_yaml = home.join("observer.yaml");
+        let home_observer_yaml = home.join("journal.yaml");
         if home_observer_yaml.exists() {
             return Some(home_observer_yaml);
         }
     }
 
     let cwd = env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    let cwd_yaml = cwd.join("bouncer-journal.yaml");
+    let cwd_yaml = cwd.join("journal.yaml");
     if cwd_yaml.exists() {
         return Some(cwd_yaml);
-    }
-
-    let cwd_yml = cwd.join("bouncer-journal.yml");
-    if cwd_yml.exists() {
-        return Some(cwd_yml);
-    }
-
-    let cwd_observer_yaml = cwd.join("observer.yaml");
-    if cwd_observer_yaml.exists() {
-        return Some(cwd_observer_yaml);
     }
 
     None

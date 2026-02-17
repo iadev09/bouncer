@@ -6,13 +6,14 @@ mod config;
 mod core;
 
 #[cfg(target_os = "linux")]
+use core::{run_journal_watcher, run_publisher};
+
+#[cfg(target_os = "linux")]
 use anyhow::{Context, Result};
 #[cfg(target_os = "linux")]
 use bouncer_helpers::{logging, shutdown};
 #[cfg(target_os = "linux")]
 use config::JournalConfig;
-#[cfg(target_os = "linux")]
-use core::{run_journal_listener, run_publisher};
 #[cfg(target_os = "linux")]
 use tokio::sync::mpsc;
 #[cfg(target_os = "linux")]
@@ -26,12 +27,12 @@ async fn main() -> Result<()> {
     logging::init_logging(
         "bouncer_journal=info,tokio=warn",
         "JOURNAL_LOG",
-        "bouncer-journal",
+        "bouncer-journal"
     );
 
     let config = JournalConfig::load()?;
     info!(
-        "journal observer starting: unit={}, server={}, source={}, identifiers={}",
+        "journal watcher starting: unit={}, server={}, source={}, identifiers={}",
         config.unit,
         config.server,
         config.source,
@@ -42,24 +43,22 @@ async fn main() -> Result<()> {
     let shutdown = CancellationToken::new();
     tokio::spawn(shutdown::listen_shutdown(shutdown.clone()));
 
-    let listener_task = tokio::spawn(run_journal_listener(
+    let watcher_task = tokio::spawn(run_journal_watcher(
         config.clone(),
         events_tx,
-        shutdown.clone(),
+        shutdown.clone()
     ));
 
     let publisher_task = tokio::spawn(run_publisher(
         config.clone(),
         events_rx,
-        shutdown.clone(),
+        shutdown.clone()
     ));
 
     shutdown.cancelled().await;
 
-    if let Err(err) =
-        listener_task.await.context("listener task join failed")?
-    {
-        warn!("listener task stopped with error: error={err}");
+    if let Err(err) = watcher_task.await.context("watcher task join failed")? {
+        warn!("watcher task stopped with error: error={err}");
     }
 
     if let Err(err) =

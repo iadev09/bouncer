@@ -206,9 +206,7 @@ fn extract_relay_host(detail: &str) -> Option<String> {
 }
 
 fn is_relay_handoff_host(host: &str) -> bool {
-    RELAY_HANDOFF_HOSTS
-        .iter()
-        .any(|relay| host.eq_ignore_ascii_case(relay))
+    RELAY_HANDOFF_HOSTS.iter().any(|relay| host.eq_ignore_ascii_case(relay))
 }
 
 /// Normalizes message-id into the tracking hash expected by the app.

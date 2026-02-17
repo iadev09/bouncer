@@ -105,8 +105,9 @@ deploy_journal() {
 }
 
 deploy_all() {
-  echo "Deploying observer, server and client to ${TARGET_HOST} (${BUILD_MODE})"
-  deploy_observer
+  echo "Deploying all to ${TARGET_HOST} (${BUILD_MODE})"
+#  deploy_observer
+  deploy_journal
   deploy_server
   deploy_client
   echo "All selected binaries deployed successfully."

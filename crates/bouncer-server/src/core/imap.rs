@@ -11,7 +11,7 @@ use tokio::net::TcpStream;
 use tokio::task::JoinSet;
 use tokio::time::{Duration, interval};
 use tokio_util::sync::CancellationToken;
-use tracing::{debug, info, warn};
+use tracing::{debug, info, trace, warn};
 
 use super::UpsertBounceOutcome;
 use super::database::Database;
@@ -75,7 +75,7 @@ async fn run_imap_poll_once(
     config: &ImapConfig,
     db: Arc<Database>
 ) -> Result<()> {
-    debug!("imap poll started");
+    trace!("imap poll started");
     let host = config.host.as_deref().context("IMAP_HOST missing")?;
     let user = config.user.as_deref().context("IMAP_USER missing")?;
     let pass = config.pass.as_deref().context("IMAP_PASS missing")?;

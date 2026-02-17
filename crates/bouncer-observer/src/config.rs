@@ -35,7 +35,7 @@ impl ObserverConfig {
             .config_path
             .or_else(resolve_observer_config_path)
             .context(
-            "observer config path not found (OBSERVER_CONFIG_PATH or observer.yaml/observer.yml)",
+            "observer config path not found (OBSERVER_CONFIG_PATH or observer.yaml)",
         )?;
         let mut config = load_observer_config_yaml(&config_path)?;
         config.normalize()?;
@@ -71,7 +71,7 @@ fn resolve_observer_config_path() -> Option<PathBuf> {
         if home_yaml.exists() {
             return Some(home_yaml);
         }
-        let home_yml = home.join("observer.yml");
+        let home_yml = home.join("observer.yaml");
         if home_yml.exists() {
             return Some(home_yml);
         }
@@ -82,7 +82,7 @@ fn resolve_observer_config_path() -> Option<PathBuf> {
     if cwd_yaml.exists() {
         return Some(cwd_yaml);
     }
-    let cwd_yml = cwd.join("observer.yml");
+    let cwd_yml = cwd.join("observer.yaml");
     if cwd_yml.exists() {
         return Some(cwd_yml);
     }

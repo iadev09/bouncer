@@ -696,11 +696,7 @@ fn extract_mailbox(value: &str) -> Option<String> {
         .trim()
         .trim_matches(|c| c == '<' || c == '>' || c == '"' || c == '\'');
 
-    if candidate.contains('@') {
-        Some(candidate.to_string())
-    } else {
-        None
-    }
+    if candidate.contains('@') { Some(candidate.to_string()) } else { None }
 }
 
 fn parse_status_code(value: &str) -> Option<String> {

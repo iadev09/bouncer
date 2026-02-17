@@ -1,0 +1,61 @@
+FROM --platform=linux/amd64 rust:trixie
+
+RUN apt-get update && \
+    apt-get install -y \
+        pkg-config \
+        libsystemd-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 1️⃣ Only dependency metadata
+# manifests
+COPY Cargo.toml Cargo.lock ./
+
+COPY crates/bouncer-client/Cargo.* crates/bouncer-client/
+COPY crates/bouncer-helpers/Cargo.* crates/bouncer-helpers/
+COPY crates/bouncer-journal/Cargo.* crates/bouncer-journal/
+COPY crates/bouncer-observer/Cargo.* crates/bouncer-observer/
+COPY crates/bouncer-server/Cargo.* crates/bouncer-server/
+COPY crates/bouncer-proto/Cargo.* crates/bouncer-proto/
+COPY crates/bouncer-tools/Cargo.* crates/bouncer-tools/
+
+# create dummy sources
+
+RUN mkdir -p crates/bouncer-client/src \
+    && echo "fn main() {}" > crates/bouncer-client/src/main.rs
+
+RUN mkdir -p crates/bouncer-helpers/src \
+    && echo "pub fn dummy() {}" > crates/bouncer-helpers/src/lib.rs
+
+RUN mkdir -p crates/bouncer-journal/src \
+    && echo "fn main() {}" > crates/bouncer-journal/src/main.rs
+
+RUN mkdir -p crates/bouncer-observer/src \
+    && echo "fn main() {}" > crates/bouncer-observer/src/main.rs
+
+RUN mkdir -p crates/bouncer-server/src \
+    && echo "fn main() {}" > crates/bouncer-server/src/main.rs
+
+RUN mkdir -p crates/bouncer-proto/src \
+    && echo "pub fn dummy() {}" > crates/bouncer-proto/src/lib.rs
+
+RUN mkdir -p crates/bouncer-tools/src \
+    && echo "fn main() {}" > crates/bouncer-tools/src/main.rs
+
+RUN cargo fetch
+
+# dependency cache build
+#RUN cargo build -p bouncer-journal --release || true
+
+# 3️⃣ Real source code
+COPY . .
+
+# 4️⃣ Real build
+
+RUN cargo build --release -p bouncer-journal
+
+ENV JOURNAL_LOG=debug
+
+ENTRYPOINT ["./target/release/bouncer-journal"]
+CMD ["journal.yaml"]

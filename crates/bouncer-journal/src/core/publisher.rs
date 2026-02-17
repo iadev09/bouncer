@@ -2,7 +2,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use anyhow::{Context, Result};
 use bouncer_proto::{
-    Header, encode_header_json, read_ack_async, write_frame_async,
+    Header, encode_header_json, read_ack_async, write_frame_async
 };
 use tokio::net::TcpStream;
 use tokio::sync::mpsc;
@@ -19,7 +19,7 @@ const FRAME_TO: &str = "bouncer@ingest";
 pub async fn run_publisher(
     config: JournalConfig,
     mut events_rx: mpsc::Receiver<DeliveryEvent>,
-    shutdown: CancellationToken,
+    shutdown: CancellationToken
 ) -> Result<()> {
     let mut connection: Option<TcpStream> = None;
     let mut heartbeat_tick =
@@ -94,7 +94,7 @@ async fn send_with_retry(
     config: &JournalConfig,
     connection: &mut Option<TcpStream>,
     kind: &str,
-    payload: &[u8],
+    payload: &[u8]
 ) -> Result<()> {
     let mut last_error: Option<anyhow::Error> = None;
 
@@ -161,13 +161,13 @@ async fn send_frame(
     config: &JournalConfig,
     stream: &mut TcpStream,
     kind: &str,
-    payload: &[u8],
+    payload: &[u8]
 ) -> Result<()> {
     let header = Header {
         from: format!("journal@{}", sanitize_header_value(&config.source)),
         to: FRAME_TO.to_string(),
         kind: Some(kind.to_string()),
-        source: Some(config.source.clone()),
+        source: Some(config.source.clone())
     };
 
     let header_bytes =
@@ -190,7 +190,7 @@ async fn send_frame(
 
 fn build_delivery_payload(
     config: &JournalConfig,
-    event: &DeliveryEvent,
+    event: &DeliveryEvent
 ) -> Result<Vec<u8>> {
     let payload = DeliveryEventPayload {
         source: sanitize_header_value(&config.source),
@@ -204,7 +204,7 @@ fn build_delivery_payload(
         observed_at_unix: SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map(|d| d.as_secs())
-            .unwrap_or(0),
+            .unwrap_or(0)
     };
 
     serde_json::to_vec(&payload)

@@ -1,7 +1,7 @@
-mod journal_listener;
 mod parser;
 mod publisher;
 mod types;
+mod watcher;
 
-pub use journal_listener::run_journal_listener;
 pub use publisher::run_publisher;
+pub use watcher::run_journal_watcher;
