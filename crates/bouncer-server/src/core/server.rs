@@ -17,7 +17,7 @@ const MAX_BODY_LEN: u64 = 25 * 1024 * 1024;
 /// The loop exits only when the shared shutdown token is cancelled.
 pub async fn run_tcp_server(
     listen: &str,
-    state: AppState
+    state: AppState,
 ) -> Result<()> {
     let listener = TcpListener::bind(listen)
         .await
@@ -56,7 +56,7 @@ pub async fn run_tcp_server(
 /// - everything else: treat payload as raw mail and enqueue to spool
 async fn handle_client(
     mut stream: TcpStream,
-    state: AppState
+    state: AppState,
 ) -> Result<()> {
     loop {
         let (header_bytes, body) =
@@ -72,7 +72,7 @@ async fn handle_client(
                             | ErrorKind::BrokenPipe
                     ) =>
                 {
-                    trace!("client disconnected: error={}", err);
+                    warn!("client disconnected: error={}", err);
                     break;
                 }
                 Err(err) => {
@@ -83,11 +83,19 @@ async fn handle_client(
         let header = decode_header_json(&header_bytes)
             .context("failed to decode header")?;
 
-        if matches!(header.kind.as_deref(), Some("heartbeat" | "register")) {
-            stream.write_all(ACK).await.context("failed to write ACK")?;
+        if matches!(header.kind.as_deref(), Some("heartbeat")) {
             trace!(
-                "control frame accepted: kind={}, source={}, from={}",
-                header.kind.as_deref().unwrap_or("-"),
+                "client heartbeat: source={}",
+                header.source.as_deref().unwrap_or("-")
+            );
+            stream.write_all(ACK).await.context("failed to write ACK")?;
+            continue;
+        }
+
+        if matches!(header.kind.as_deref(), Some("register")) {
+            stream.write_all(ACK).await.context("failed to write ACK")?;
+            info!(
+                "client registered: source={}, from={}",
                 header.source.as_deref().unwrap_or("-"),
                 header.from
             );
@@ -125,7 +133,7 @@ async fn handle_client(
         stream.write_all(ACK).await.context("failed to write ACK")?;
 
         info!(
-            "message accepted: bytes={}, path={}, kind={}, source={}",
+            "bounce accepted: bytes={}, path={}, kind={}, source={}",
             body.len(),
             written_path.display(),
             header.kind.as_deref().unwrap_or("mail"),

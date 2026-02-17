@@ -37,6 +37,16 @@ impl Database {
         Ok(Self { pool })
     }
 
+    /// Applies a delivery update emitted by observer/journal publishers.
+    ///
+    /// Behavior:
+    /// - Resolves the local `mail_messages.id` by `event.hash`.
+    /// - If no local message exists, this is a no-op (warn log + commit).
+    /// - If found, updates `mail_messages.status` and `updated_at`.
+    /// - For non-success outcomes, upserts a row in `mail_message_bounces`
+    ///   for the resolved message with latest action/status/description.
+    ///
+    /// All writes are performed in a single transaction.
     pub async fn apply_observer_event(
         &self,
         event: &ObserverDeliveryEvent
