@@ -182,7 +182,8 @@ fn run_reader_thread(
 }
 
 fn open_reader(config: &JournalConfig) -> Result<journal::Journal> {
-    let mut reader = journal::OpenOptions::default().open()?;
+    let mut reader =
+        journal::OpenOptions::default().system(true).local_only(true).open()?;
     reader.match_add("_SYSTEMD_UNIT", config.unit.clone())?;
     Ok(reader)
 }
