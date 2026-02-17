@@ -12,6 +12,7 @@ pub struct ParsedBounce {
     pub hash: String,
     pub status_code: String,
     pub action: Option<String>,
+    pub sender: Option<String>,
     pub recipient: Option<String>,
     pub description: Option<String>
 }
@@ -71,6 +72,7 @@ impl ObserverDeliveryEvent {
             hash: self.hash.clone(),
             status_code: self.status_code.clone(),
             action: Some(self.action.clone()),
+            sender: None,
             recipient: Some(self.recipient.clone()),
             description: Some(self.diagnostic.clone())
         }
@@ -191,6 +193,7 @@ pub fn parse_bounce_report_detailed(
         hash,
         status_code,
         action: merged.action,
+        sender: merged.sender,
         recipient: merged.recipient,
         description: merged.description
     })
@@ -213,6 +216,7 @@ struct ParsedFields {
     hash_priority: u8,
     status_code: Option<String>,
     action: Option<String>,
+    sender: Option<String>,
     recipient: Option<String>,
     description: Option<String>
 }
@@ -224,6 +228,7 @@ impl Default for ParsedFields {
             hash_priority: u8::MAX,
             status_code: None,
             action: None,
+            sender: None,
             recipient: None,
             description: None
         }
@@ -339,6 +344,17 @@ fn apply_header_line(
         }
     }
 
+    if parsed.sender.is_none() {
+        if let Some(value) = header_value(line, "X-Postfix-Sender")
+            .or_else(|| header_value(line, "Return-Path"))
+            .or_else(|| header_value(line, "From"))
+        {
+            if let Some(sender) = extract_mailbox(value) {
+                parsed.sender = Some(sender);
+            }
+        }
+    }
+
     if parsed.description.is_none() {
         if let Some(value) = header_value(line, "Diagnostic-Code") {
             let description = value
@@ -396,6 +412,9 @@ fn merge_missing(
     }
     if target.action.is_none() {
         target.action = source.action;
+    }
+    if target.sender.is_none() {
+        target.sender = source.sender;
     }
     if target.recipient.is_none() {
         target.recipient = source.recipient;
@@ -655,6 +674,33 @@ fn normalize_message_hash(value: &str) -> Option<String> {
         local_part.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
 
     if hash.is_empty() { None } else { Some(hash) }
+}
+
+fn extract_mailbox(value: &str) -> Option<String> {
+    let raw = value
+        .split_once(';')
+        .map(|(_, rhs)| rhs.trim())
+        .unwrap_or_else(|| value.trim());
+
+    let inner = if let Some(start) = raw.find('<') {
+        if let Some(end_rel) = raw[start + 1..].find('>') {
+            &raw[start + 1..start + 1 + end_rel]
+        } else {
+            raw
+        }
+    } else {
+        raw
+    };
+
+    let candidate = inner
+        .trim()
+        .trim_matches(|c| c == '<' || c == '>' || c == '"' || c == '\'');
+
+    if candidate.contains('@') {
+        Some(candidate.to_string())
+    } else {
+        None
+    }
 }
 
 fn parse_status_code(value: &str) -> Option<String> {

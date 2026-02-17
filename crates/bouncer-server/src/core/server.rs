@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use bouncer_proto::{ACK, decode_header_json, read_frame_async};
 use tokio::io::AsyncWriteExt;
 use tokio::net::{TcpListener, TcpStream};
-use tracing::{info, warn};
+use tracing::{info, trace, warn};
 
 use super::parser::ObserverDeliveryEvent;
 use crate::app::AppState;
@@ -66,7 +66,7 @@ async fn handle_client(
 
     if matches!(header.kind.as_deref(), Some("heartbeat" | "register")) {
         stream.write_all(ACK).await.context("failed to write ACK")?;
-        info!(
+        trace!(
             "control frame accepted: kind={}, source={}, from={}",
             header.kind.as_deref().unwrap_or("-"),
             header.source.as_deref().unwrap_or("-"),

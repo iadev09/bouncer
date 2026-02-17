@@ -342,11 +342,13 @@ async fn process_fetched_message(
     let parsed = match parse_bounce_report_detailed(&raw_mail) {
         Ok(parsed) => {
             debug!(
-                "imap message parsed: uid={}, hash={}, status_code={}, action={}",
+                "imap message parsed: uid={}, hash={}, status_code={}, action={}, from={}, to={}",
                 uid,
                 parsed.hash,
                 parsed.status_code,
-                parsed.action.as_deref().unwrap_or("-")
+                parsed.action.as_deref().unwrap_or("-"),
+                parsed.sender.as_deref().unwrap_or("-"),
+                parsed.recipient.as_deref().unwrap_or("-")
             );
             parsed
         }
