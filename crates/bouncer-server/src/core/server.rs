@@ -114,10 +114,11 @@ async fn handle_client(
 
             stream.write_all(ACK).await.context("failed to write ACK")?;
             info!(
-                "observer event accepted: source={}, hash={}, queue_id={}, status_code={}, action={}",
+                "observer event accepted: source={}, hash={}, queue_id={}, recipient={}, status_code={}, action={}",
                 header.source.as_deref().unwrap_or("-"),
                 event.hash,
                 event.queue_id,
+                event.recipient,
                 event.status_code,
                 event.action
             );
