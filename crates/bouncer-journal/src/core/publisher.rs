@@ -65,13 +65,13 @@ pub async fn run_publisher(
                     );
                 } else {
                     info!(
-                        "journal event published: hash={}, queue_id={}, smtp_status={}, status_code={}, action={}, recipient={}",
+                        "journal event published: hash={}, queue_id={}, recipient={}, smtp_status={}, status_code={}, action={}",
                         event.hash,
                         event.queue_id,
+                        event.recipient,
                         event.smtp_status,
                         event.status_code,
                         event.action,
-                        event.recipient
                     );
                 }
             }
