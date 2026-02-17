@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "crates/bounce-delivery",
     "crates/bouncer-proto",
     "crates/bouncer-server",
     "crates/bouncer-client",

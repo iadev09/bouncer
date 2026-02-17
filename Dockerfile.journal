@@ -12,15 +12,19 @@ WORKDIR /app
 # manifests
 COPY Cargo.toml Cargo.lock ./
 
-COPY crates/bouncer-client/Cargo.* crates/bouncer-client/
-COPY crates/bouncer-helpers/Cargo.* crates/bouncer-helpers/
-COPY crates/bouncer-journal/Cargo.* crates/bouncer-journal/
-COPY crates/bouncer-observer/Cargo.* crates/bouncer-observer/
-COPY crates/bouncer-server/Cargo.* crates/bouncer-server/
-COPY crates/bouncer-proto/Cargo.* crates/bouncer-proto/
-COPY crates/bouncer-tools/Cargo.* crates/bouncer-tools/
+COPY crates/bouncer-client/Cargo.toml crates/bouncer-client/Cargo.toml
+COPY crates/bouncer-helpers/Cargo.toml crates/bouncer-helpers/Cargo.toml
+COPY crates/bouncer-journal/Cargo.toml crates/bouncer-journal/Cargo.toml
+COPY crates/bouncer-observer/Cargo.toml crates/bouncer-observer/Cargo.toml
+COPY crates/bouncer-server/Cargo.toml crates/bouncer-server/Cargo.toml
+COPY crates/bouncer-proto/Cargo.toml crates/bouncer-proto/Cargo.toml
+COPY crates/bouncer-tools/Cargo.toml crates/bouncer-tools/Cargo.toml
+COPY crates/bounce-delivery/Cargo.toml crates/bounce-delivery/Cargo.toml
 
 # create dummy sources
+
+RUN mkdir -p crates/bounce-delivery/src \
+    && echo "fn main() {}" > crates/bounce-delivery/src/main.rs
 
 RUN mkdir -p crates/bouncer-client/src \
     && echo "fn main() {}" > crates/bouncer-client/src/main.rs
@@ -42,6 +46,7 @@ RUN mkdir -p crates/bouncer-proto/src \
 
 RUN mkdir -p crates/bouncer-tools/src \
     && echo "fn main() {}" > crates/bouncer-tools/src/main.rs
+
 
 RUN cargo fetch
 

@@ -1,0 +1,7 @@
+[package]
+name = "bounce-delivery"
+version = "0.1.0"
+edition = "2024"
+description = "Postfix pipe helper that writes bounce message stdin to incoming spool"
+
+[dependencies]

@@ -1,4 +1,22 @@
 
 
 # sends bounce mails to bouncer-server
+#
+# Local spool mode is useful when the bounce_notice_recipient inbox and
+# a bouncer-server instance run on the same physical host.
+# Crate/binary name: bounce-delivery
+#
+# Useful Postfix pipe(8) macros for argv:
+#   ${sender} ${recipient} ${original_recipient} ${queue_id} ${size}
+# Reference: https://www.postfix.org/pipe.8.html
+# main.cf reminder:
+#   bounce_notify_destination_recipient_limit = 1
+# Why:
+#   In multi-recipient deliveries, this keeps one recipient per pipe invocation,
+#   so bounce processing can reliably resolve which recipient a bounce belongs to.
+#   In our current model, each Message-ID maps to exactly one recipient.
+# Example (future local spool binary):
+#   argv=/usr/local/bin/bounce-delivery --incoming-dir /var/spool/bouncer/incoming \
+#     --from ${sender} --to ${recipient} --original-to ${original_recipient} \
+#     --queue-id ${queue_id} --size ${size}
 bounce-notify  unix - n n - - pipe flags=FRq user=postmaster:postmaster argv=/usr/local/bin/bounce-notify --serve [SERVER_ADDR]:2147 --from  ${sender} --to ${recipient} --timeout-secs 2

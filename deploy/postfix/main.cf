@@ -3,3 +3,8 @@
 notify_classes = bounce, delay
 bounce_notice_recipient = bounces@domain.com
 bounce_size_limit = 51200
+
+# Optional (disabled): enable when multi-recipient sends are used and
+# bounce-recipient attribution must be deterministic per pipe invocation.
+# In our current model, Message-ID maps to one recipient, so this is not required.
+# bounce_notify_destination_recipient_limit = 1

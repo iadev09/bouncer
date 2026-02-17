@@ -151,6 +151,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "bounce-delivery"
+version = "0.1.0"
+
+[[package]]
 name = "bouncer-client"
 version = "0.1.0"
 dependencies = [

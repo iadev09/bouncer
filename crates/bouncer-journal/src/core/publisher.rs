@@ -28,6 +28,8 @@ pub async fn run_publisher(
     loop {
         tokio::select! {
             _ = shutdown.cancelled() => {
+                // TODO: Send an explicit disconnect/unregister frame before
+                // closing the socket so the server can treat this as graceful.
                 info!("publisher stopping");
                 break;
             }
