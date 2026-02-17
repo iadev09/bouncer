@@ -106,7 +106,7 @@ deploy_journal() {
 
 deploy_delivery() {
   echo "Deploying bounce-delivery to ${TARGET_HOST} (${BUILD_MODE})"
-  BUILD_MODE="${BUILD_MODE}" "${DEPLOY_SCRIPT}" "${TARGET_HOST}" "bouncer-delivery"
+  BUILD_MODE="${BUILD_MODE}" "${DEPLOY_SCRIPT}" "${TARGET_HOST}" "bounce-delivery"
 }
 
 deploy_all() {
