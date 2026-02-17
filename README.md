@@ -118,11 +118,12 @@ database_url: "mysql://user:pass@127.0.0.1:3306/test_db"
 worker_concurrency: 4
 process_queue_per_worker: 1024
 incoming_scan_secs: 60
+# Optional. Omit the whole `imap` block to disable IMAP polling.
 imap:
-  host: ""
+  host: "mail.example.com"
   port: 993
-  user: ""
-  pass: ""
+  user: "noreply@example.com"
+  pass: "secret"
   mailbox: "INBOX"
   poll_secs: 60
   connect_timeout_secs: 10

@@ -4,6 +4,7 @@ worker_concurrency: 4
 process_queue_per_worker: 1024
 incoming_scan_secs: 60
 database_url: "mysql://bouncer@localhost/test_db?socket=/var/lib/mysql/mysql.sock"
+# Optional. Remove the entire `imap` block to disable IMAP polling.
 imap:
   host: "mail.bouncer.app"
   port: 993

@@ -61,11 +61,15 @@ async fn main() -> Result<()> {
         process_rx,
         config.worker_concurrency
     ));
-    tokio::spawn(run_imap_poll_loop(
-        config.imap.clone(),
-        state.db.clone(),
-        state.shutdown.clone()
-    ));
+    if let Some(imap) = config.imap.clone() {
+        tokio::spawn(run_imap_poll_loop(
+            imap,
+            state.db.clone(),
+            state.shutdown.clone()
+        ));
+    } else {
+        info!("imap fallback disabled (imap config missing)");
+    }
 
     run_tcp_server(&config.listen, state).await
 }

@@ -20,7 +20,7 @@ pub struct Config {
     #[serde(default = "default_incoming_scan_secs")]
     pub incoming_scan_secs: u64,
     #[serde(default)]
-    pub imap: ImapConfig
+    pub imap: Option<ImapConfig>
 }
 
 impl Config {
@@ -54,13 +54,18 @@ impl Config {
         self.worker_concurrency = self.worker_concurrency.max(1);
         self.process_queue_per_worker = self.process_queue_per_worker.max(1);
         self.incoming_scan_secs = self.incoming_scan_secs.max(1);
-        self.imap.normalize();
+        if let Some(imap) = self.imap.as_mut() {
+            imap.normalize();
+        }
 
         Ok(())
     }
 
     fn validate(&self) -> Result<()> {
-        self.imap.validate()
+        if let Some(imap) = self.imap.as_ref() {
+            imap.validate()?;
+        }
+        Ok(())
     }
 }
 
@@ -150,16 +155,16 @@ impl ImapConfig {
     }
 
     fn validate(&self) -> Result<()> {
-        if !self.enabled() {
-            return Ok(());
+        if self.host.is_none() {
+            bail!("server config imap present but `imap.host` is missing");
         }
 
         if self.user.is_none() {
-            bail!("server config imap enabled but `imap.user` is missing");
+            bail!("server config imap present but `imap.user` is missing");
         }
 
         if self.pass.is_none() {
-            bail!("server config imap enabled but `imap.pass` is missing");
+            bail!("server config imap present but `imap.pass` is missing");
         }
 
         Ok(())

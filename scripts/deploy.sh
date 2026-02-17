@@ -104,12 +104,18 @@ deploy_journal() {
   BUILD_MODE="${BUILD_MODE}" "${DEPLOY_SCRIPT}" "${TARGET_HOST}" "bouncer-journal"
 }
 
+deploy_delivery() {
+  echo "Deploying bounce-delivery to ${TARGET_HOST} (${BUILD_MODE})"
+  BUILD_MODE="${BUILD_MODE}" "${DEPLOY_SCRIPT}" "${TARGET_HOST}" "bouncer-delivery"
+}
+
 deploy_all() {
   echo "Deploying all to ${TARGET_HOST} (${BUILD_MODE})"
-#  deploy_observer
   deploy_journal
   deploy_server
-  deploy_client
+  deploy_delivery
+#  deploy_observer
+#  deploy_client
   echo "All selected binaries deployed successfully."
 }
 
@@ -122,6 +128,9 @@ case "${DEPLOY_TARGET}" in
     ;;
   server|bouncer-server)
     deploy_server
+    ;;
+  delivery|bounce-delivery)
+    deploy_delivery
     ;;
   client|bouncer-client)
     deploy_client
