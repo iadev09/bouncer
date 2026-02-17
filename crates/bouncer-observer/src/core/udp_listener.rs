@@ -70,6 +70,10 @@ pub async fn run_udp_listener(
                 match parsed {
                     ParsedSyslog::Cleanup { queue_id, hash } => {
                         // First stage: remember which app hash belongs to this postfix queue id.
+                        debug!(
+                            "queue mapping stored: queue_id={}, hash={}",
+                            queue_id, hash
+                        );
                         queue_map.insert(
                             queue_id,
                             QueueEntry {
@@ -98,6 +102,15 @@ pub async fn run_udp_listener(
                             diagnostic: smtp.diagnostic,
                             smtp_status: smtp.smtp_status,
                         };
+                        debug!(
+                            "smtp log matched queue mapping: queue_id={}, hash={}, smtp_status={}, status_code={}, action={}, recipient={}",
+                            event.queue_id,
+                            event.hash,
+                            event.smtp_status,
+                            event.status_code,
+                            event.action,
+                            event.recipient
+                        );
 
                         if let Err(err) = events_tx.try_send(event) {
                             warn!(

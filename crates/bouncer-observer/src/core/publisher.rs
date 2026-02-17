@@ -65,6 +65,16 @@ pub async fn run_publisher(
                         event.smtp_status,
                         err
                     );
+                } else {
+                    debug!(
+                        "observer event published: hash={}, queue_id={}, smtp_status={}, status_code={}, action={}, recipient={}",
+                        event.hash,
+                        event.queue_id,
+                        event.smtp_status,
+                        event.status_code,
+                        event.action,
+                        event.recipient
+                    );
                 }
             }
             _ = heartbeat_tick.tick(), if config.heartbeat_secs > 0 => {
