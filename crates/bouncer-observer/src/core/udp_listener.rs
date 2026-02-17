@@ -6,7 +6,7 @@ use tokio::net::UdpSocket;
 use tokio::sync::mpsc;
 use tokio::time::interval;
 use tokio_util::sync::CancellationToken;
-use tracing::{debug, info, warn};
+use tracing::{debug, info, trace, warn};
 
 use super::parser::parse_postfix_line;
 use super::types::{DeliveryEvent, ParsedSyslog, QueueEntry};
@@ -85,7 +85,7 @@ pub async fn run_udp_listener(
                     ParsedSyslog::Smtp(smtp) => {
                         // Second stage: smtp has status fields; join with cached hash via queue id.
                         let Some(entry) = queue_map.get_mut(&smtp.queue_id) else {
-                            debug!(
+                            trace!(
                                 "smtp log without known queue mapping: queue_id={}",
                                 smtp.queue_id
                             );
