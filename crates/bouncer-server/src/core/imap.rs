@@ -83,17 +83,16 @@ async fn run_imap_poll_once(
     let max_messages = config.max_messages_per_poll.max(1);
     let mut session = open_imap_session(config, host, user, pass).await?;
 
-    session.select(&config.mailbox).await.with_context(|| {
-        format!("imap select mailbox failed: mailbox={}", config.mailbox)
-    })?;
+    session
+        .select(&config.mailbox)
+        .await
+        .with_context(|| format!("imap select mailbox failed: mailbox={}", config.mailbox))?;
 
     let uid_search_query = build_uid_search_query(config.max_history);
     let mut uids: Vec<Uid> = session
         .uid_search(&uid_search_query)
         .await
-        .with_context(|| {
-            format!("imap UID SEARCH failed: query={uid_search_query}")
-        })?
+        .with_context(|| format!("imap UID SEARCH failed: query={uid_search_query}"))?
         .into_iter()
         .collect();
     let unseen_total = uids.len();
@@ -136,10 +135,8 @@ async fn run_imap_poll_once(
         .await
         .context("imap UID FETCH batch failed")?;
 
-    while let Some(fetch) = fetches
-        .try_next()
-        .await
-        .context("imap UID FETCH batch stream failed")?
+    while let Some(fetch) =
+        fetches.try_next().await.context("imap UID FETCH batch stream failed")?
     {
         fetched_items += 1;
 
@@ -153,11 +150,7 @@ async fn run_imap_poll_once(
 
         let raw_mail = match fetch.body() {
             Some(bytes) => {
-                debug!(
-                    "imap message fetched: uid={}, bytes={}",
-                    uid,
-                    bytes.len()
-                );
+                debug!("imap message fetched: uid={}, bytes={}", uid, bytes.len());
                 bytes.to_vec()
             }
             None => {
@@ -169,8 +162,7 @@ async fn run_imap_poll_once(
         let db = db.clone();
         let mark_seen_if_not_exist = config.mark_seen_if_not_exist;
         processing.spawn(async move {
-            process_fetched_message(uid, raw_mail, db, mark_seen_if_not_exist)
-                .await
+            process_fetched_message(uid, raw_mail, db, mark_seen_if_not_exist).await
         });
 
         if processing.len() >= process_concurrency {
@@ -210,13 +202,7 @@ async fn run_imap_poll_once(
                     let db = db.clone();
                     let mark_seen_if_not_exist = config.mark_seen_if_not_exist;
                     processing.spawn(async move {
-                        process_fetched_message(
-                            uid,
-                            raw_mail,
-                            db,
-                            mark_seen_if_not_exist
-                        )
-                        .await
+                        process_fetched_message(uid, raw_mail, db, mark_seen_if_not_exist).await
                     });
                 }
                 Ok(None) => {
@@ -225,10 +211,7 @@ async fn run_imap_poll_once(
                 }
                 Err(err) => {
                     fetch_failures += 1;
-                    warn!(
-                        "imap per-uid fetch failed: uid={}, error={err:#}",
-                        uid
-                    );
+                    warn!("imap per-uid fetch failed: uid={}, error={err:#}", uid);
                 }
             }
 
@@ -306,16 +289,14 @@ async fn fetch_single_message_body(
         .await
         .with_context(|| format!("imap per-uid FETCH failed: uid={uid}"))?;
 
-    while let Some(fetch) = fetches.try_next().await.with_context(|| {
-        format!("imap per-uid FETCH stream failed: uid={uid}")
-    })? {
+    while let Some(fetch) = fetches
+        .try_next()
+        .await
+        .with_context(|| format!("imap per-uid FETCH stream failed: uid={uid}"))?
+    {
         if let Some(bytes) = fetch.body() {
             let fetched_uid = fetch.uid.unwrap_or(uid);
-            debug!(
-                "imap message fetched (per-uid): uid={}, bytes={}",
-                fetched_uid,
-                bytes.len()
-            );
+            debug!("imap message fetched (per-uid): uid={}, bytes={}", fetched_uid, bytes.len());
             return Ok(Some(bytes.to_vec()));
         }
     }
@@ -359,30 +340,16 @@ async fn process_fetched_message(
             return ProcessResult::IgnoredMissingHash { uid };
         }
         Err(err) => {
-            return ProcessResult::ParseFailed {
-                uid,
-                code: err.code(),
-                message: err.to_string()
-            };
+            return ProcessResult::ParseFailed { uid, code: err.code(), message: err.to_string() };
         }
     };
 
     match db.upsert_bounce(&parsed).await {
-        Ok(UpsertBounceOutcome::UpdatedLocalMessage) => {
-            ProcessResult::Processed { uid }
-        }
+        Ok(UpsertBounceOutcome::UpdatedLocalMessage) => ProcessResult::Processed { uid },
         Ok(UpsertBounceOutcome::MissingLocalMessage) => {
-            ProcessResult::MissingInDb {
-                uid,
-                hash: parsed.hash,
-                mark_seen: mark_seen_if_not_exist
-            }
+            ProcessResult::MissingInDb { uid, hash: parsed.hash, mark_seen: mark_seen_if_not_exist }
         }
-        Err(err) => ProcessResult::DbFailed {
-            uid,
-            hash: parsed.hash,
-            message: format!("{err:#}")
-        }
+        Err(err) => ProcessResult::DbFailed { uid, hash: parsed.hash, message: format!("{err:#}") }
     }
 }
 
@@ -451,9 +418,7 @@ async fn collect_one_process_result(
         }
         Some(Err(err)) => {
             *join_failures += 1;
-            warn!(
-                "ERROR_CODE=IMAP_TASK_JOIN_FAILED imap process task join failed: error={err}"
-            );
+            warn!("ERROR_CODE=IMAP_TASK_JOIN_FAILED imap process task join failed: error={err}");
         }
         None => {}
     }
@@ -472,12 +437,7 @@ fn build_uid_search_query(max_history: Option<StdDuration>) -> String {
 fn format_imap_since_date(duration: StdDuration) -> String {
     let seconds = duration.as_secs().min(i64::MAX as u64) as i64;
     let cutoff = OffsetDateTime::now_utc() - time::Duration::seconds(seconds);
-    format!(
-        "{:02}-{}-{}",
-        cutoff.day(),
-        month_short(cutoff.month()),
-        cutoff.year()
-    )
+    format!("{:02}-{}-{}", cutoff.day(), month_short(cutoff.month()), cutoff.year())
 }
 
 fn month_short(month: Month) -> &'static str {
@@ -504,21 +464,17 @@ async fn open_imap_session(
     pass: &str
 ) -> Result<ImapSession> {
     let port = config.port;
-    let connect_timeout =
-        Duration::from_secs(config.connect_timeout_secs.max(1));
+    let connect_timeout = Duration::from_secs(config.connect_timeout_secs.max(1));
 
-    let tcp = tokio::time::timeout(
-        connect_timeout,
-        TcpStream::connect((host, port)),
-    )
-    .await
-    .with_context(|| {
-        format!(
-            "imap tcp connect timeout: host={host}, port={port}, timeout_secs={}",
-            config.connect_timeout_secs
-        )
-    })?
-    .with_context(|| format!("imap tcp connect failed: host={host}, port={port}"))?;
+    let tcp = tokio::time::timeout(connect_timeout, TcpStream::connect((host, port)))
+        .await
+        .with_context(|| {
+            format!(
+                "imap tcp connect timeout: host={host}, port={port}, timeout_secs={}",
+                config.connect_timeout_secs
+            )
+        })?
+        .with_context(|| format!("imap tcp connect failed: host={host}, port={port}"))?;
 
     let tls = TlsConnector::new();
     let tls_stream = tokio::time::timeout(connect_timeout, tls.connect(host, tcp))
@@ -572,12 +528,7 @@ async fn mark_seen_uids(
         .await
         .context("imap UID STORE +FLAGS (\\\\Seen) failed")?;
 
-    while updates
-        .try_next()
-        .await
-        .context("imap UID STORE response stream failed")?
-        .is_some()
-    {}
+    while updates.try_next().await.context("imap UID STORE response stream failed")?.is_some() {}
 
     Ok(())
 }

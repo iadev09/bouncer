@@ -4,7 +4,7 @@
 #
 # 🚀 Genel Ayarlar
 edition = "2024"                # Rust 2024 edition
-max_width = 80                 # Satır uzunluğu sınırı
+max_width = 100                 # Satır uzunluğu sınırı
 #use_small_heuristics = "Off"     # Küçük kod bloklarını tek satırda tutmaya çalış
 #use_small_heuristics = "Default"     # Küçük kod bloklarını tek satırda tutmaya çalış
 use_small_heuristics = "Max"     # Küçük kod bloklarını tek satırda tutmaya çalış

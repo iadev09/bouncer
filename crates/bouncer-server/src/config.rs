@@ -28,7 +28,7 @@ impl Config {
         let config_path = parse_config_path_arg(env::args().skip(1))?
             .or_else(resolve_server_config_path)
             .context(
-                "server config path not found (BOUNCER_CONFIG_PATH or bouncer.yaml/bouncer.yaml)",
+                "server config path not found (BOUNCER_CONFIG_PATH or bouncer.yaml/bouncer.yaml)"
             )?;
 
         let mut config = load_config_yaml(&config_path)?;
@@ -77,9 +77,7 @@ where
     let second = args.next();
 
     if let Some(arg) = second {
-        bail!(
-            "too many arguments: {arg} (usage: bouncer-server [config-path])"
-        );
+        bail!("too many arguments: {arg} (usage: bouncer-server [config-path])");
     }
 
     if matches!(first.as_deref(), Some("-h" | "--help")) {
@@ -108,10 +106,7 @@ pub struct ImapConfig {
     pub connect_timeout_secs: u64,
     #[serde(default = "default_imap_max_messages_per_poll")]
     pub max_messages_per_poll: usize,
-    #[serde(
-        default,
-        deserialize_with = "bouncer_helpers::de::deserialize_optional_duration"
-    )]
+    #[serde(default, deserialize_with = "bouncer_helpers::de::deserialize_optional_duration")]
     pub max_history: Option<Duration>,
     #[serde(default)]
     pub mark_seen_if_not_exist: bool
@@ -172,12 +167,10 @@ impl ImapConfig {
 }
 
 fn load_config_yaml(path: &Path) -> Result<Config> {
-    let raw = std::fs::read(path).with_context(|| {
-        format!("failed to read config file {}", path.display())
-    })?;
-    serde_yaml::from_slice(&raw).with_context(|| {
-        format!("failed to parse YAML config {}", path.display())
-    })
+    let raw = std::fs::read(path)
+        .with_context(|| format!("failed to read config file {}", path.display()))?;
+    serde_yaml::from_slice(&raw)
+        .with_context(|| format!("failed to parse YAML config {}", path.display()))
 }
 
 fn resolve_server_config_path() -> Option<PathBuf> {

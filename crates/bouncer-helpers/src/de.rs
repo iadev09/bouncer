@@ -3,9 +3,7 @@ use std::time::Duration;
 use serde::de::Error as _;
 use serde::{Deserialize, Deserializer};
 
-pub fn deserialize_optional_duration<'de, D>(
-    deserializer: D
-) -> Result<Option<Duration>, D::Error>
+pub fn deserialize_optional_duration<'de, D>(deserializer: D) -> Result<Option<Duration>, D::Error>
 where
     D: Deserializer<'de>
 {
@@ -38,9 +36,9 @@ where
 {
     let s: Option<String> = Option::deserialize(deserializer)?;
     match s {
-        Some(duration_str) => humantime::parse_duration(&duration_str)
-            .map(T::from)
-            .map_err(serde::de::Error::custom),
+        Some(duration_str) => {
+            humantime::parse_duration(&duration_str).map(T::from).map_err(serde::de::Error::custom)
+        }
         None => Ok(T::default())
     }
 }

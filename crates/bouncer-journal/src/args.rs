@@ -16,9 +16,7 @@ impl JournalArgs {
         let second = args.next();
 
         if let Some(arg) = second {
-            bail!(
-                "too many arguments: {arg} (usage: bouncer-journal [config-path])"
-            );
+            bail!("too many arguments: {arg} (usage: bouncer-journal [config-path])");
         }
 
         if matches!(first.as_deref(), Some("-h" | "--help")) {

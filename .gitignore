@@ -1,4 +1,5 @@
 /target
+/target-native
 /.env
 /.idea
 /.sqlx

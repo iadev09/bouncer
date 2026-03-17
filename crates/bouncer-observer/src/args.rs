@@ -16,9 +16,7 @@ impl ObserverArgs {
         let second = args.next();
 
         if let Some(arg) = second {
-            bail!(
-                "too many arguments: {arg} (usage: bouncer-observer [config-path])"
-            );
+            bail!("too many arguments: {arg} (usage: bouncer-observer [config-path])");
         }
 
         if matches!(first.as_deref(), Some("-h" | "--help")) {

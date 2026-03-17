@@ -24,10 +24,9 @@ pub async fn run_udp_listener(
     events_tx: mpsc::Sender<DeliveryEvent>,
     shutdown: CancellationToken
 ) -> Result<()> {
-    let socket =
-        UdpSocket::bind(config.listen_udp).await.with_context(|| {
-            format!("failed to bind udp socket {}", config.listen_udp)
-        })?;
+    let socket = UdpSocket::bind(config.listen_udp)
+        .await
+        .with_context(|| format!("failed to bind udp socket {}", config.listen_udp))?;
 
     let mut buf = [0_u8; UDP_PACKET_BYTES];
     let mut queue_map: HashMap<String, QueueEntry> = HashMap::new();

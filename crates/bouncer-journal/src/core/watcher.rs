@@ -165,9 +165,7 @@ fn run_reader_thread(
                     let _ = reader.wait(Some(Duration::from_millis(500)));
                 }
                 Ok(_) => {
-                    if let Some(line) =
-                        extract_postfix_line(&mut reader, &config.identifiers)
-                    {
+                    if let Some(line) = extract_postfix_line(&mut reader, &config.identifiers) {
                         if lines_tx.send(line).is_err() {
                             return;
                         }
@@ -183,8 +181,7 @@ fn run_reader_thread(
 }
 
 fn open_reader(config: &JournalConfig) -> Result<journal::Journal> {
-    let mut reader =
-        journal::OpenOptions::default().system(true).local_only(true).open()?;
+    let mut reader = journal::OpenOptions::default().system(true).local_only(true).open()?;
     reader.match_add("_SYSTEMD_UNIT", config.unit.clone())?;
     Ok(reader)
 }
@@ -197,9 +194,7 @@ fn extract_postfix_line(
     let identifier = get_data_string(reader, "SYSLOG_IDENTIFIER")
         .or_else(|| get_data_string(reader, "_COMM"))?;
 
-    let matched = identifiers
-        .iter()
-        .any(|needle| identifier.eq_ignore_ascii_case(needle));
+    let matched = identifiers.iter().any(|needle| identifier.eq_ignore_ascii_case(needle));
     if !matched {
         return None;
     }
@@ -211,9 +206,10 @@ fn get_data_string(
     reader: &mut journal::Journal,
     key: &str
 ) -> Option<String> {
-    reader.get_data(key).ok()?.and_then(|field| {
-        field.value().map(|value| String::from_utf8_lossy(value).into_owned())
-    })
+    reader
+        .get_data(key)
+        .ok()?
+        .and_then(|field| field.value().map(|value| String::from_utf8_lossy(value).into_owned()))
 }
 
 fn prune_queue_map(

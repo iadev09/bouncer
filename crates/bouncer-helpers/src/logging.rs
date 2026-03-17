@@ -22,10 +22,7 @@ pub fn init_logging(
         if is_running_under_systemd() {
             match tracing_journald::layer() {
                 Ok(layer) => {
-                    tracing_subscriber::registry()
-                        .with(env_filter)
-                        .with(layer)
-                        .init();
+                    tracing_subscriber::registry().with(env_filter).with(layer).init();
                     return;
                 }
                 Err(err) => {
@@ -52,6 +49,5 @@ fn build_env_filter(
 #[cfg(target_os = "linux")]
 #[inline]
 fn is_running_under_systemd() -> bool {
-    env::var_os("JOURNAL_STREAM").is_some()
-        || env::var_os("INVOCATION_ID").is_some()
+    env::var_os("JOURNAL_STREAM").is_some() || env::var_os("INVOCATION_ID").is_some()
 }

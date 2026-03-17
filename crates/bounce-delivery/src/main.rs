@@ -1,13 +1,12 @@
 use std::collections::hash_map::DefaultHasher;
-use std::fmt;
 use std::fs::{self, OpenOptions};
 use std::hash::{Hash, Hasher};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
-use std::process;
 use std::process::ExitCode;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
+use std::{fmt, process};
 
 const EX_USAGE: u8 = 64;
 const EX_TEMPFAIL: u8 = 75;
@@ -119,17 +118,11 @@ fn sanitize_queue_id(raw: &str) -> String {
         }
     }
 
-    if out.is_empty() {
-        "na".to_string()
-    } else {
-        out
-    }
+    if out.is_empty() { "na".to_string() } else { out }
 }
 
 fn unix_timestamps() -> (u128, u128) {
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default();
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default();
     (now.as_millis(), now.as_nanos())
 }
 
@@ -165,25 +158,19 @@ impl Cli {
             match arg.as_str() {
                 "--incoming-dir" => {
                     let raw = args.next().ok_or_else(|| {
-                        DeliveryError::Usage(
-                            "missing value for --incoming-dir".to_string()
-                        )
+                        DeliveryError::Usage("missing value for --incoming-dir".to_string())
                     })?;
                     incoming_dir = Some(PathBuf::from(raw));
                 }
                 "--queue-id" => {
                     queue_id = Some(args.next().ok_or_else(|| {
-                        DeliveryError::Usage(
-                            "missing value for --queue-id".to_string()
-                        )
+                        DeliveryError::Usage("missing value for --queue-id".to_string())
                     })?);
                 }
                 "--from" | "--to" | "--original-to" | "--size" => {
-                    let _ = args.next().ok_or_else(|| {
-                        DeliveryError::Usage(format!(
-                            "missing value for {arg}"
-                        ))
-                    })?;
+                    let _ = args
+                        .next()
+                        .ok_or_else(|| DeliveryError::Usage(format!("missing value for {arg}")))?;
                 }
                 "-h" | "--help" => {
                     return Err(DeliveryError::Usage(
@@ -192,18 +179,14 @@ impl Cli {
                     ));
                 }
                 _ => {
-                    return Err(DeliveryError::Usage(format!(
-                        "unknown argument: {arg}"
-                    )));
+                    return Err(DeliveryError::Usage(format!("unknown argument: {arg}")));
                 }
             }
         }
 
         Ok(Self {
             incoming_dir: incoming_dir.ok_or_else(|| {
-                DeliveryError::Usage(
-                    "missing required argument --incoming-dir".to_string()
-                )
+                DeliveryError::Usage("missing required argument --incoming-dir".to_string())
             })?,
             queue_id
         })

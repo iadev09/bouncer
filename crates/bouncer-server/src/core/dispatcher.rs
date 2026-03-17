@@ -2,9 +2,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use anyhow::{Context, Result, bail};
-use notify::{
-    Config as NotifyConfig, Event, RecommendedWatcher, RecursiveMode, Watcher
-};
+use notify::{Config as NotifyConfig, Event, RecommendedWatcher, RecursiveMode, Watcher};
 use tokio::sync::{Mutex, mpsc};
 use tokio::time::{Duration, interval};
 use tokio_util::sync::CancellationToken;
@@ -19,12 +17,8 @@ pub async fn spawn_notify_watcher(
     state: AppState,
     process_tx: mpsc::Sender<PathBuf>
 ) {
-    if let Err(err) = run_notify_watcher(
-        state.spool.incoming.clone(),
-        state.shutdown.clone(),
-        process_tx
-    )
-    .await
+    if let Err(err) =
+        run_notify_watcher(state.spool.incoming.clone(), state.shutdown.clone(), process_tx).await
     {
         error!("notify watcher stopped with error: error={err}");
     }
@@ -45,20 +39,13 @@ async fn run_notify_watcher(
     ) {
         Ok(w) => w,
         Err(err) => {
-            return Err(anyhow::anyhow!(
-                "failed to create notify watcher: {err}"
-            ));
+            return Err(anyhow::anyhow!("failed to create notify watcher: {err}"));
         }
     };
 
-    watcher.watch(&incoming_dir, RecursiveMode::NonRecursive).with_context(
-        || {
-            format!(
-                "failed to watch incoming spool: {}",
-                incoming_dir.display()
-            )
-        }
-    )?;
+    watcher
+        .watch(&incoming_dir, RecursiveMode::NonRecursive)
+        .with_context(|| format!("failed to watch incoming spool: {}", incoming_dir.display()))?;
 
     info!("notify watcher active: path={}", incoming_dir.display());
 
@@ -198,8 +185,7 @@ async fn process_spooled_message(
         return Ok(());
     }
 
-    let file_name =
-        incoming_path.file_name().context("incoming path has no file name")?;
+    let file_name = incoming_path.file_name().context("incoming path has no file name")?;
 
     let processing_path = state.spool.processing.join(file_name);
 
@@ -247,19 +233,16 @@ async fn process_spooled_message(
     }
     .await;
 
-    let target_dir =
-        if result.is_ok() { &state.spool.done } else { &state.spool.failed };
+    let target_dir = if result.is_ok() { &state.spool.done } else { &state.spool.failed };
 
     let final_path = target_dir.join(file_name);
-    tokio::fs::rename(&processing_path, &final_path).await.with_context(
-        || {
-            format!(
-                "failed to finalize file: {} -> {}",
-                processing_path.display(),
-                final_path.display()
-            )
-        }
-    )?;
+    tokio::fs::rename(&processing_path, &final_path).await.with_context(|| {
+        format!(
+            "failed to finalize file: {} -> {}",
+            processing_path.display(),
+            final_path.display()
+        )
+    })?;
 
     result
 }
@@ -309,18 +292,12 @@ mod tests {
 
         let (tx, mut rx) = mpsc::channel(8);
         let shutdown = CancellationToken::new();
-        let join = tokio::spawn(run_notify_watcher(
-            incoming.clone(),
-            shutdown.clone(),
-            tx
-        ));
+        let join = tokio::spawn(run_notify_watcher(incoming.clone(), shutdown.clone(), tx));
 
         tokio::time::sleep(Duration::from_millis(200)).await;
 
         let eml_path = incoming.join("sample.eml");
-        tokio::fs::write(&eml_path, b"Subject: test\r\n\r\nbody")
-            .await
-            .unwrap();
+        tokio::fs::write(&eml_path, b"Subject: test\r\n\r\nbody").await.unwrap();
 
         assert!(wait_for_path(&mut rx, &eml_path).await);
 
@@ -336,22 +313,14 @@ mod tests {
 
         let (tx, mut rx) = mpsc::channel(8);
         let shutdown = CancellationToken::new();
-        let join = tokio::spawn(run_notify_watcher(
-            incoming.clone(),
-            shutdown.clone(),
-            tx
-        ));
+        let join = tokio::spawn(run_notify_watcher(incoming.clone(), shutdown.clone(), tx));
 
         tokio::time::sleep(Duration::from_millis(200)).await;
 
         let txt_path = incoming.join("ignore.txt");
         tokio::fs::write(&txt_path, b"not eml").await.unwrap();
 
-        let got_any = timeout(Duration::from_millis(700), rx.recv())
-            .await
-            .ok()
-            .flatten()
-            .is_some();
+        let got_any = timeout(Duration::from_millis(700), rx.recv()).await.ok().flatten().is_some();
         assert!(!got_any);
 
         shutdown.cancel();

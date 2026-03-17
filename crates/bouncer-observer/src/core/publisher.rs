@@ -1,9 +1,7 @@
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use anyhow::{Context, Result};
-use bouncer_proto::{
-    Header, encode_header_json, read_ack_async, write_frame_async
-};
+use bouncer_proto::{Header, encode_header_json, read_ack_async, write_frame_async};
 use tokio::net::TcpStream;
 use tokio::sync::mpsc;
 use tokio::time::{interval, sleep, timeout};
@@ -26,8 +24,7 @@ pub async fn run_publisher(
     shutdown: CancellationToken
 ) -> Result<()> {
     let mut connection: Option<TcpStream> = None;
-    let mut heartbeat_tick =
-        interval(Duration::from_secs(config.heartbeat_secs.max(1)));
+    let mut heartbeat_tick = interval(Duration::from_secs(config.heartbeat_secs.max(1)));
 
     loop {
         tokio::select! {
@@ -136,13 +133,11 @@ async fn send_with_retry(
 
 /// Opens a TCP connection to server and sends an initial `register` frame.
 async fn connect_and_register(config: &ObserverConfig) -> Result<TcpStream> {
-    let timeout_window =
-        Duration::from_secs(config.connect_timeout_secs.max(1));
-    let mut stream =
-        timeout(timeout_window, TcpStream::connect(&config.server))
-            .await
-            .with_context(|| format!("connect timeout to {}", config.server))?
-            .with_context(|| format!("connect failed to {}", config.server))?;
+    let timeout_window = Duration::from_secs(config.connect_timeout_secs.max(1));
+    let mut stream = timeout(timeout_window, TcpStream::connect(&config.server))
+        .await
+        .with_context(|| format!("connect timeout to {}", config.server))?
+        .with_context(|| format!("connect failed to {}", config.server))?;
 
     stream.set_nodelay(true).ok();
 
@@ -156,10 +151,7 @@ async fn connect_and_register(config: &ObserverConfig) -> Result<TcpStream> {
         .await
         .context("register frame failed")?;
 
-    info!(
-        "observer connected: server={}, source={}",
-        config.server, config.source
-    );
+    info!("observer connected: server={}, source={}", config.server, config.source);
     Ok(stream)
 }
 
@@ -177,8 +169,7 @@ async fn send_frame(
         source: Some(config.source.clone())
     };
 
-    let header_bytes =
-        encode_header_json(&header).context("failed to encode frame header")?;
+    let header_bytes = encode_header_json(&header).context("failed to encode frame header")?;
 
     let io_timeout = Duration::from_secs(config.io_timeout_secs.max(1));
 
@@ -215,16 +206,12 @@ fn build_delivery_payload(
             .unwrap_or(0)
     };
 
-    serde_json::to_vec(&payload)
-        .context("failed to encode observer delivery event")
+    serde_json::to_vec(&payload).context("failed to encode observer delivery event")
 }
 
 /// Builds a lightweight heartbeat payload with current unix timestamp.
 fn build_heartbeat_payload() -> Vec<u8> {
-    let ts = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0);
+    let ts = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
     format!("ts={ts}\n").into_bytes()
 }
 

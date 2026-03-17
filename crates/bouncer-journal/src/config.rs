@@ -81,10 +81,8 @@ impl JournalConfig {
 }
 
 fn load_config_yaml(path: &Path) -> Result<JournalConfig> {
-    let raw = std::fs::read(path)
-        .with_context(|| format!("failed to read {}", path.display()))?;
-    serde_yaml::from_slice(&raw)
-        .with_context(|| format!("failed to parse yaml {}", path.display()))
+    let raw = std::fs::read(path).with_context(|| format!("failed to read {}", path.display()))?;
+    serde_yaml::from_slice(&raw).with_context(|| format!("failed to parse yaml {}", path.display()))
 }
 
 fn resolve_journal_config_path() -> Option<PathBuf> {
@@ -166,11 +164,7 @@ fn default_unit() -> String {
 }
 
 fn default_identifiers() -> Vec<String> {
-    vec![
-        "postfix/cleanup".to_string(),
-        "postfix/smtp".to_string(),
-        "postfix/qmgr".to_string(),
-    ]
+    vec!["postfix/cleanup".to_string(), "postfix/smtp".to_string(), "postfix/qmgr".to_string()]
 }
 
 fn default_seek_tail() -> bool {

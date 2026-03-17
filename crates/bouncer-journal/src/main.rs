@@ -24,11 +24,7 @@ use tracing::{info, warn};
 #[cfg(target_os = "linux")]
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<()> {
-    logging::init_logging(
-        "bouncer_journal=info,tokio=warn",
-        "JOURNAL_LOG",
-        "bouncer-journal"
-    );
+    logging::init_logging("bouncer_journal=info,tokio=warn", "JOURNAL_LOG", "bouncer-journal");
 
     let config = JournalConfig::load()?;
     info!(
@@ -43,17 +39,10 @@ async fn main() -> Result<()> {
     let shutdown = CancellationToken::new();
     tokio::spawn(shutdown::listen_shutdown(shutdown.clone()));
 
-    let watcher_task = tokio::spawn(run_journal_watcher(
-        config.clone(),
-        events_tx,
-        shutdown.clone()
-    ));
+    let watcher_task =
+        tokio::spawn(run_journal_watcher(config.clone(), events_tx, shutdown.clone()));
 
-    let publisher_task = tokio::spawn(run_publisher(
-        config.clone(),
-        events_rx,
-        shutdown.clone()
-    ));
+    let publisher_task = tokio::spawn(run_publisher(config.clone(), events_rx, shutdown.clone()));
 
     shutdown.cancelled().await;
 
@@ -61,9 +50,7 @@ async fn main() -> Result<()> {
         warn!("watcher task stopped with error: error={err}");
     }
 
-    if let Err(err) =
-        publisher_task.await.context("publisher task join failed")?
-    {
+    if let Err(err) = publisher_task.await.context("publisher task join failed")? {
         warn!("publisher task stopped with error: error={err}");
     }
 

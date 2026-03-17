@@ -4,9 +4,7 @@ use std::net::{SocketAddr, TcpStream, ToSocketAddrs};
 use std::process::ExitCode;
 use std::time::Duration;
 
-use bouncer_proto::{
-    Header, encode_header_json, read_ack_sync, write_frame_sync
-};
+use bouncer_proto::{Header, encode_header_json, read_ack_sync, write_frame_sync};
 
 const EX_TEMPFAIL: u8 = 75;
 const EX_USAGE: u8 = 64;
@@ -63,12 +61,7 @@ fn read_body<R: Read>(
 }
 
 fn build_header_bytes(args: &Cli) -> Result<Vec<u8>> {
-    let header = Header {
-        from: args.from.clone(),
-        to: args.to.clone(),
-        kind: None,
-        source: None
-    };
+    let header = Header { from: args.from.clone(), to: args.to.clone(), kind: None, source: None };
     let header_bytes = encode_header_json(&header)
         .map_err(|err| runtime_err("failed to serialize header", err))?;
     Ok(header_bytes)
@@ -80,10 +73,8 @@ fn send_frame_and_wait_ack(
     header_bytes: &[u8],
     body: &[u8]
 ) -> Result<()> {
-    let mut stream =
-        TcpStream::connect_timeout(&addr, timeout).map_err(|err| {
-            runtime_err(format!("failed to connect to {}", addr), err)
-        })?;
+    let mut stream = TcpStream::connect_timeout(&addr, timeout)
+        .map_err(|err| runtime_err(format!("failed to connect to {}", addr), err))?;
     stream.set_nodelay(true).ok();
 
     stream
@@ -106,18 +97,9 @@ fn send_frame_and_wait_ack(
 fn resolve_socket_addr(server: &str) -> Result<SocketAddr> {
     server
         .to_socket_addrs()
-        .map_err(|err| {
-            runtime_err(
-                format!("failed to resolve server address: {server}"),
-                err
-            )
-        })?
+        .map_err(|err| runtime_err(format!("failed to resolve server address: {server}"), err))?
         .next()
-        .ok_or_else(|| {
-            ClientError::Runtime(format!(
-                "no address resolved for server: {server}"
-            ))
-        })
+        .ok_or_else(|| ClientError::Runtime(format!("no address resolved for server: {server}")))
 }
 
 #[derive(Debug)]
@@ -145,15 +127,10 @@ impl Cli {
                 "--to" => to = args.next(),
                 "--timeout-secs" => {
                     let raw = args.next().ok_or_else(|| {
-                        ClientError::Usage(
-                            "missing value for --timeout-secs".to_string()
-                        )
+                        ClientError::Usage("missing value for --timeout-secs".to_string())
                     })?;
                     timeout_secs = raw.parse::<u64>().map_err(|_| {
-                        ClientError::Usage(
-                            "--timeout-secs must be a positive integer"
-                                .to_string()
-                        )
+                        ClientError::Usage("--timeout-secs must be a positive integer".to_string())
                     })?;
                 }
                 "-h" | "--help" => {
@@ -163,27 +140,20 @@ impl Cli {
                     ));
                 }
                 _ => {
-                    return Err(ClientError::Usage(format!(
-                        "unknown argument: {arg}"
-                    )));
+                    return Err(ClientError::Usage(format!("unknown argument: {arg}")));
                 }
             }
         }
 
         Ok(Self {
             server: server.ok_or_else(|| {
-                ClientError::Usage(
-                    "missing required argument --server".to_string()
-                )
+                ClientError::Usage("missing required argument --server".to_string())
             })?,
             from: from.ok_or_else(|| {
-                ClientError::Usage(
-                    "missing required argument --from".to_string()
-                )
+                ClientError::Usage("missing required argument --from".to_string())
             })?,
-            to: to.ok_or_else(|| {
-                ClientError::Usage("missing required argument --to".to_string())
-            })?,
+            to: to
+                .ok_or_else(|| ClientError::Usage("missing required argument --to".to_string()))?,
             timeout_secs
         })
     }
@@ -224,9 +194,7 @@ mod tests {
 
     use bouncer_proto::{ACK, MAGIC, decode_header_json};
 
-    use super::{
-        Cli, ClientError, build_header_bytes, read_body, run_with_cli
-    };
+    use super::{Cli, ClientError, build_header_bytes, read_body, run_with_cli};
 
     #[test]
     fn cli_parse_success() {
@@ -370,9 +338,7 @@ mod tests {
         }
     }
 
-    fn read_frame_sync<R: Read>(
-        reader: &mut R
-    ) -> std::io::Result<(Vec<u8>, Vec<u8>)> {
+    fn read_frame_sync<R: Read>(reader: &mut R) -> std::io::Result<(Vec<u8>, Vec<u8>)> {
         let mut magic = [0u8; 4];
         reader.read_exact(&mut magic)?;
         if magic != MAGIC {

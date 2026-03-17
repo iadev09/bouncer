@@ -34,9 +34,7 @@ impl ObserverConfig {
         let config_path = args
             .config_path
             .or_else(resolve_observer_config_path)
-            .context(
-            "observer config path not found (OBSERVER_CONFIG_PATH or observer.yaml)",
-        )?;
+            .context("observer config path not found (OBSERVER_CONFIG_PATH or observer.yaml)")?;
         let mut config = load_observer_config_yaml(&config_path)?;
         config.normalize()?;
         Ok(config)
@@ -95,10 +93,8 @@ fn home_dir() -> Option<PathBuf> {
 }
 
 fn load_observer_config_yaml(path: &Path) -> Result<ObserverConfig> {
-    let raw = std::fs::read(path)
-        .with_context(|| format!("failed to read {}", path.display()))?;
-    serde_yaml::from_slice(&raw)
-        .with_context(|| format!("failed to parse yaml {}", path.display()))
+    let raw = std::fs::read(path).with_context(|| format!("failed to read {}", path.display()))?;
+    serde_yaml::from_slice(&raw).with_context(|| format!("failed to parse yaml {}", path.display()))
 }
 
 fn non_empty_env(key: &str) -> Option<String> {

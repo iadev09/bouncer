@@ -73,9 +73,8 @@ fn parse_smtp_message(message: &str) -> Option<SmtpEvent> {
 
     let recipient = extract_between(detail, "to=<", ">")?.to_string();
     let smtp_status = extract_token(detail, "status=")?.to_ascii_lowercase();
-    let relay_handoff = extract_relay_host(detail)
-        .map(|host| is_relay_handoff_host(&host))
-        .unwrap_or(false);
+    let relay_handoff =
+        extract_relay_host(detail).map(|host| is_relay_handoff_host(&host)).unwrap_or(false);
 
     let default_status = default_status_code(&smtp_status, relay_handoff);
     let status_code = extract_token(detail, "dsn=")
@@ -114,9 +113,7 @@ fn extract_token<'a>(
     let rem = &text[start_idx..];
     let token_len = rem
         .char_indices()
-        .take_while(|(_, c)| {
-            c.is_ascii_alphanumeric() || *c == '.' || *c == '_' || *c == '-'
-        })
+        .take_while(|(_, c)| c.is_ascii_alphanumeric() || *c == '.' || *c == '_' || *c == '-')
         .last()
         .map(|(idx, c)| idx + c.len_utf8())
         .unwrap_or(0);
@@ -218,8 +215,7 @@ fn normalize_message_hash(value: &str) -> Option<String> {
     let trimmed = value.trim().trim_matches(|c| c == '<' || c == '>');
     let local_part = trimmed.split('@').next().unwrap_or("").trim();
 
-    let hash: String =
-        local_part.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
+    let hash: String = local_part.chars().filter(|c| c.is_ascii_alphanumeric()).collect();
 
     if hash.len() == 32 { Some(hash) } else { None }
 }

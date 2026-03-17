@@ -14,21 +14,16 @@ const FETCH_QUERY: &str = "(UID BODY.PEEK[])";
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<()> {
     let args = Args::parse(env::args().skip(1))?;
-    println!(
-        "imap_fetcher start: {} mode=peek_no_seen fetch_query={}",
-        args, FETCH_QUERY
-    );
+    println!("imap_fetcher start: {} mode=peek_no_seen fetch_query={}", args, FETCH_QUERY);
 
     let tcp = TcpStream::connect((args.host.as_str(), args.port))
         .await
-        .with_context(|| {
-            format!("imap tcp connect failed: {}:{}", args.host, args.port)
-        })?;
+        .with_context(|| format!("imap tcp connect failed: {}:{}", args.host, args.port))?;
     let tls = TlsConnector::new();
-    let tls_stream =
-        tls.connect(args.host.as_str(), tcp).await.with_context(|| {
-            format!("imap tls handshake failed: {}:{}", args.host, args.port)
-        })?;
+    let tls_stream = tls
+        .connect(args.host.as_str(), tcp)
+        .await
+        .with_context(|| format!("imap tls handshake failed: {}:{}", args.host, args.port))?;
 
     let mut client = Client::new(tls_stream);
     client
@@ -41,13 +36,12 @@ async fn main() -> Result<()> {
         .login(args.user.as_str(), args.pass.as_str())
         .await
         .map_err(|(err, _client)| err)
-        .with_context(|| {
-            format!("imap login failed: host={}, user={}", args.host, args.user)
-        })?;
+        .with_context(|| format!("imap login failed: host={}, user={}", args.host, args.user))?;
 
-    session.select(&args.mailbox).await.with_context(|| {
-        format!("imap select mailbox failed: {}", args.mailbox)
-    })?;
+    session
+        .select(&args.mailbox)
+        .await
+        .with_context(|| format!("imap select mailbox failed: {}", args.mailbox))?;
 
     let mut uids: Vec<Uid> = session
         .uid_search(&args.search)
@@ -61,9 +55,9 @@ async fn main() -> Result<()> {
         uids.truncate(args.limit);
     }
 
-    tokio::fs::create_dir_all(&args.output_dir).await.with_context(|| {
-        format!("failed to create output dir {}", args.output_dir.display())
-    })?;
+    tokio::fs::create_dir_all(&args.output_dir)
+        .await
+        .with_context(|| format!("failed to create output dir {}", args.output_dir.display()))?;
 
     if uids.is_empty() {
         println!("no messages matched search={}", args.search);
@@ -72,15 +66,11 @@ async fn main() -> Result<()> {
     }
 
     let uid_set = uids.iter().map(Uid::to_string).collect::<Vec<_>>().join(",");
-    let mut fetches = session
-        .uid_fetch(uid_set, FETCH_QUERY)
-        .await
-        .context("imap uid fetch failed")?;
+    let mut fetches =
+        session.uid_fetch(uid_set, FETCH_QUERY).await.context("imap uid fetch failed")?;
 
     let mut saved = 0usize;
-    while let Some(fetch) =
-        fetches.try_next().await.context("imap fetch stream failed")?
-    {
+    while let Some(fetch) = fetches.try_next().await.context("imap fetch stream failed")? {
         let Some(uid) = fetch.uid else {
             continue;
         };
@@ -93,12 +83,7 @@ async fn main() -> Result<()> {
             .await
             .with_context(|| format!("failed to write {}", path.display()))?;
         saved += 1;
-        println!(
-            "saved uid={} bytes={} path={}",
-            uid,
-            body.len(),
-            path.display()
-        );
+        println!("saved uid={} bytes={} path={}", uid, body.len(), path.display());
     }
     drop(fetches);
 
@@ -144,28 +129,23 @@ impl Args {
                 "--host" => host = it.next(),
                 "--port" => {
                     let raw = it.next().context("missing value for --port")?;
-                    port =
-                        raw.parse::<u16>().context("invalid --port value")?;
+                    port = raw.parse::<u16>().context("invalid --port value")?;
                 }
                 "--user" => user = it.next(),
                 "--pass" => pass = it.next(),
                 "--mailbox" => {
-                    mailbox =
-                        it.next().context("missing value for --mailbox")?;
+                    mailbox = it.next().context("missing value for --mailbox")?;
                 }
                 "--search" => {
                     search = it.next().context("missing value for --search")?;
                 }
                 "--limit" => {
                     let raw = it.next().context("missing value for --limit")?;
-                    limit = raw
-                        .parse::<usize>()
-                        .context("invalid --limit value")?;
+                    limit = raw.parse::<usize>().context("invalid --limit value")?;
                 }
                 "--output-dir" => {
-                    output_dir = PathBuf::from(
-                        it.next().context("missing value for --output-dir")?
-                    );
+                    output_dir =
+                        PathBuf::from(it.next().context("missing value for --output-dir")?);
                 }
                 "-h" | "--help" => {
                     print_usage();

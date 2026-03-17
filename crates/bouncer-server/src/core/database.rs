@@ -55,39 +55,32 @@ impl Database {
         let message_status = map_mail_message_status(&parsed);
 
         let mut tx = self.pool.begin().await.context("failed to begin tx")?;
-        let message_id = sqlx::query_scalar::<_, u32>(
-            "SELECT id FROM mail_messages WHERE hash = ? LIMIT 1"
-        )
-        .bind(&parsed.hash)
-        .fetch_optional(&mut *tx)
-        .await
-        .context("failed to query mail_messages")?;
+        let message_id =
+            sqlx::query_scalar::<_, u32>("SELECT id FROM mail_messages WHERE hash = ? LIMIT 1")
+                .bind(&parsed.hash)
+                .fetch_optional(&mut *tx)
+                .await
+                .context("failed to query mail_messages")?;
 
         let Some(message_id) = message_id else {
             tx.commit().await.context("failed to commit tx")?;
             warn!(
                 "observer event not linked to local message: hash={}, queue_id={}, source={}, smtp_status={}, observed_at_unix={}",
-                event.hash,
-                event.queue_id,
-                event.source,
-                event.smtp_status,
-                event.observed_at_unix
+                event.hash, event.queue_id, event.source, event.smtp_status, event.observed_at_unix
             );
             return Ok(());
         };
 
-        sqlx::query(
-            "UPDATE mail_messages SET status = ?, updated_at = NOW() WHERE id = ?",
-        )
-        .bind(message_status)
-        .bind(message_id)
-        .execute(&mut *tx)
-        .await
-        .context("failed to update mail_messages from observer event")?;
+        sqlx::query("UPDATE mail_messages SET status = ?, updated_at = NOW() WHERE id = ?")
+            .bind(message_status)
+            .bind(message_id)
+            .execute(&mut *tx)
+            .await
+            .context("failed to update mail_messages from observer event")?;
 
         if message_status != MAIL_STATUS_SUCCESS {
             let exists = sqlx::query_scalar::<_, i64>(
-                "SELECT 1 FROM mail_message_bounces WHERE message_id = ? LIMIT 1",
+                "SELECT 1 FROM mail_message_bounces WHERE message_id = ? LIMIT 1"
             )
             .bind(message_id)
             .fetch_optional(&mut *tx)
@@ -129,19 +122,18 @@ impl Database {
     ) -> Result<UpsertBounceOutcome> {
         let mut tx = self.pool.begin().await.context("failed to begin tx")?;
 
-        let message_id = sqlx::query_scalar::<_, u32>(
-            "SELECT id FROM mail_messages WHERE hash = ? LIMIT 1"
-        )
-        .bind(&parsed.hash)
-        .fetch_optional(&mut *tx)
-        .await
-        .context("failed to query mail_messages")?;
+        let message_id =
+            sqlx::query_scalar::<_, u32>("SELECT id FROM mail_messages WHERE hash = ? LIMIT 1")
+                .bind(&parsed.hash)
+                .fetch_optional(&mut *tx)
+                .await
+                .context("failed to query mail_messages")?;
 
         if let Some(message_id) = message_id {
             let message_status = map_mail_message_status(parsed);
 
             let message_update_result = sqlx::query(
-                "UPDATE mail_messages SET status = ?, updated_at = NOW() WHERE hash = ?",
+                "UPDATE mail_messages SET status = ?, updated_at = NOW() WHERE hash = ?"
             )
             .bind(message_status)
             .bind(&parsed.hash)
@@ -156,7 +148,7 @@ impl Database {
 
             if message_status != MAIL_STATUS_SUCCESS {
                 let exists = sqlx::query_scalar::<_, i64>(
-                    "SELECT 1 FROM mail_message_bounces WHERE message_id = ? LIMIT 1",
+                    "SELECT 1 FROM mail_message_bounces WHERE message_id = ? LIMIT 1"
                 )
                 .bind(message_id)
                 .fetch_optional(&mut *tx)
@@ -217,13 +209,12 @@ impl Database {
                 return Ok(UpsertBounceOutcome::MissingLocalMessage);
             }
 
-            let exists = sqlx::query_scalar::<_, i64>(
-                "SELECT 1 FROM mail_bounces WHERE hash = ? LIMIT 1"
-            )
-            .bind(&parsed.hash)
-            .fetch_optional(&mut *tx)
-            .await
-            .context("failed to query mail_bounces")?;
+            let exists =
+                sqlx::query_scalar::<_, i64>("SELECT 1 FROM mail_bounces WHERE hash = ? LIMIT 1")
+                    .bind(&parsed.hash)
+                    .fetch_optional(&mut *tx)
+                    .await
+                    .context("failed to query mail_bounces")?;
 
             if exists.is_some() {
                 let bounce_update_result = sqlx::query(
@@ -273,14 +264,10 @@ impl Database {
 
 fn map_mail_message_status(parsed: &ParsedBounce) -> i32 {
     if let Some(action) = parsed.action.as_deref() {
-        if action.eq_ignore_ascii_case("delivered")
-            || action.eq_ignore_ascii_case("sent")
-        {
+        if action.eq_ignore_ascii_case("delivered") || action.eq_ignore_ascii_case("sent") {
             return MAIL_STATUS_SUCCESS;
         }
-        if action.eq_ignore_ascii_case("delayed")
-            || action.eq_ignore_ascii_case("deferred")
-        {
+        if action.eq_ignore_ascii_case("delayed") || action.eq_ignore_ascii_case("deferred") {
             return MAIL_STATUS_PENDING;
         }
     }
