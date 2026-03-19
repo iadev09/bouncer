@@ -14,20 +14,20 @@ pub struct ParsedBounce {
     pub action: Option<String>,
     pub sender: Option<String>,
     pub recipient: Option<String>,
-    pub description: Option<String>
+    pub description: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ParserError {
     NotDeliveryReport,
     MissingHash,
-    MissingStatusCode
+    MissingStatusCode,
 }
 
 impl fmt::Display for ParserError {
     fn fmt(
         &self,
-        f: &mut fmt::Formatter<'_>
+        f: &mut fmt::Formatter<'_>,
     ) -> fmt::Result {
         match self {
             Self::NotDeliveryReport => {
@@ -36,7 +36,7 @@ impl fmt::Display for ParserError {
             Self::MissingHash => {
                 write!(f, "bounce hash not found (X-Message-Id/Message-ID)")
             }
-            Self::MissingStatusCode => write!(f, "status code not found")
+            Self::MissingStatusCode => write!(f, "status code not found"),
         }
     }
 }
@@ -48,7 +48,7 @@ impl ParserError {
         match self {
             Self::NotDeliveryReport => "NOT_DELIVERY_REPORT",
             Self::MissingHash => "MISSING_HASH",
-            Self::MissingStatusCode => "MISSING_STATUS_CODE"
+            Self::MissingStatusCode => "MISSING_STATUS_CODE",
         }
     }
 }
@@ -63,7 +63,7 @@ pub struct ObserverDeliveryEvent {
     pub action: String,
     pub diagnostic: String,
     pub smtp_status: String,
-    pub observed_at_unix: u64
+    pub observed_at_unix: u64,
 }
 
 impl ObserverDeliveryEvent {
@@ -74,7 +74,7 @@ impl ObserverDeliveryEvent {
             action: Some(self.action.clone()),
             sender: None,
             recipient: Some(self.recipient.clone()),
-            description: Some(self.diagnostic.clone())
+            description: Some(self.diagnostic.clone()),
         }
     }
 }
@@ -180,13 +180,13 @@ pub fn parse_bounce_report_detailed(
         action: merged.action,
         sender: merged.sender,
         recipient: merged.recipient,
-        description: merged.description
+        description: merged.description,
     })
 }
 
 fn header_value<'a>(
     line: &'a str,
-    header_name: &str
+    header_name: &str,
 ) -> Option<&'a str> {
     let (name, value) = line.split_once(':')?;
     if name.trim().eq_ignore_ascii_case(header_name) { Some(value.trim()) } else { None }
@@ -199,7 +199,7 @@ struct ParsedFields {
     action: Option<String>,
     sender: Option<String>,
     recipient: Option<String>,
-    description: Option<String>
+    description: Option<String>,
 }
 
 impl Default for ParsedFields {
@@ -211,14 +211,14 @@ impl Default for ParsedFields {
             action: None,
             sender: None,
             recipient: None,
-            description: None
+            description: None,
         }
     }
 }
 
 fn parse_fields_from_text(
     text: &str,
-    scan_label: &str
+    scan_label: &str,
 ) -> ParsedFields {
     let mut parsed = ParsedFields::default();
     let mut current = String::new();
@@ -257,7 +257,7 @@ fn parse_fields_from_text(
             &mut parsed,
             &current,
             scan_label,
-            logical_lines_scanned.saturating_add(1)
+            logical_lines_scanned.saturating_add(1),
         );
     }
 
@@ -266,7 +266,7 @@ fn parse_fields_from_text(
 
 fn full_message_text<'a>(
     raw_mail: &'a [u8],
-    cache: &'a mut Option<String>
+    cache: &'a mut Option<String>,
 ) -> &'a str {
     cache.get_or_insert_with(|| String::from_utf8_lossy(raw_mail).into_owned()).as_str()
 }
@@ -275,7 +275,7 @@ fn apply_header_line(
     parsed: &mut ParsedFields,
     line: &str,
     scan_label: &str,
-    line_no: usize
+    line_no: usize,
 ) {
     try_set_hash_from_header(parsed, line, "X-Message-Id", scan_label, line_no);
     try_set_hash_from_header(parsed, line, "X-MS-Exchange-Parent-Message-Id", scan_label, line_no);
@@ -283,61 +283,57 @@ fn apply_header_line(
     try_set_hash_from_header(parsed, line, "References", scan_label, line_no);
     try_set_hash_from_header(parsed, line, "Message-ID", scan_label, line_no);
 
-    if parsed.status_code.is_none() {
-        if let Some(value) = header_value(line, "Status") {
-            parsed.status_code = parse_status_code(value);
+    if parsed.status_code.is_none()
+        && let Some(value) = header_value(line, "Status")
+    {
+        parsed.status_code = parse_status_code(value);
+    }
+
+    if parsed.action.is_none()
+        && let Some(value) = header_value(line, "Action")
+    {
+        let word = value.split_whitespace().next().unwrap_or("").trim();
+        if !word.is_empty() {
+            parsed.action = Some(word.to_string());
         }
     }
 
-    if parsed.action.is_none() {
-        if let Some(value) = header_value(line, "Action") {
-            let word = value.split_whitespace().next().unwrap_or("").trim();
-            if !word.is_empty() {
-                parsed.action = Some(word.to_string());
-            }
-        }
-    }
-
-    if parsed.recipient.is_none() {
-        if let Some(value) = header_value(line, "Original-Recipient")
+    if parsed.recipient.is_none()
+        && let Some(value) = header_value(line, "Original-Recipient")
             .or_else(|| header_value(line, "Final-Recipient"))
-        {
-            let recipient =
-                value.split_once(';').map(|(_, rhs)| rhs.trim()).unwrap_or_else(|| value.trim());
-            if !recipient.is_empty() {
-                parsed.recipient = Some(recipient.to_string());
-            }
+    {
+        let recipient =
+            value.split_once(';').map(|(_, rhs)| rhs.trim()).unwrap_or_else(|| value.trim());
+        if !recipient.is_empty() {
+            parsed.recipient = Some(recipient.to_string());
         }
     }
 
-    if parsed.sender.is_none() {
-        if let Some(value) = header_value(line, "X-Postfix-Sender")
+    if parsed.sender.is_none()
+        && let Some(value) = header_value(line, "X-Postfix-Sender")
             .or_else(|| header_value(line, "Return-Path"))
             .or_else(|| header_value(line, "From"))
-        {
-            if let Some(sender) = extract_mailbox(value) {
-                parsed.sender = Some(sender);
-            }
-        }
+        && let Some(sender) = extract_mailbox(value)
+    {
+        parsed.sender = Some(sender);
     }
 
-    if parsed.description.is_none() {
-        if let Some(value) = header_value(line, "Diagnostic-Code") {
-            let description =
-                value.split_once(';').map(|(_, rhs)| rhs.trim()).unwrap_or_else(|| value.trim());
-            if !description.is_empty() {
-                parsed.description = Some(description.to_string());
-            }
+    if parsed.description.is_none()
+        && let Some(value) = header_value(line, "Diagnostic-Code")
+    {
+        let description =
+            &&value.split_once(';').map(|(_, rhs)| rhs.trim()).unwrap_or_else(|| value.trim());
+        if !description.is_empty() {
+            parsed.description = Some(description.to_string());
         }
     }
 }
-
 fn try_set_hash_from_header(
     parsed: &mut ParsedFields,
     line: &str,
     header_name: &str,
     scan_label: &str,
-    line_no: usize
+    line_no: usize,
 ) {
     let Some(value) = header_value(line, header_name) else {
         return;
@@ -362,7 +358,7 @@ fn try_set_hash_from_header(
 
 fn merge_missing(
     target: &mut ParsedFields,
-    source: ParsedFields
+    source: ParsedFields,
 ) {
     if source.hash.is_some()
         && (target.hash.is_none() || source.hash_priority < target.hash_priority)
@@ -394,13 +390,13 @@ fn hash_header_priority(header_name: &str) -> u8 {
         "in-reply-to" => 2,
         "references" => 3,
         "message-id" => 4,
-        _ => 10
+        _ => 10,
     }
 }
 
 fn constrain_hash_source(
     parsed: &mut ParsedFields,
-    kind: CandidateKind
+    kind: CandidateKind,
 ) {
     if !matches!(kind, CandidateKind::OriginalHeaders | CandidateKind::OriginalMessage) {
         parsed.hash = None;
@@ -413,7 +409,7 @@ struct AttachmentScanCandidate<'a> {
     scan_label: String,
     text: &'a str,
     kind: CandidateKind,
-    priority: u8
+    priority: u8,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -422,7 +418,7 @@ enum CandidateKind {
     OriginalHeaders,
     OriginalMessage,
     TextBody,
-    Other
+    Other,
 }
 
 fn collect_attachment_text_candidates<'a>(
@@ -443,37 +439,36 @@ fn message_parser() -> &'static MessageParser {
 fn collect_attachment_text_candidates_from_attachments<'a>(
     message: &'a Message<'a>,
     path: &str,
-    out: &mut Vec<AttachmentScanCandidate<'a>>
+    out: &mut Vec<AttachmentScanCandidate<'a>>,
 ) {
     for (idx, part) in message.attachments().enumerate() {
         let part_path = format!("{path}.{idx}");
         let mime = part_mime_type(part);
 
-        if should_scan_attachment_mime(&mime) {
-            if let Some(text) = decoded_part_text(part) {
-                if !text.trim().is_empty() {
-                    let kind = classify_attachment_kind(&mime);
-                    let priority = attachment_scan_priority(kind, text);
-                    out.push(AttachmentScanCandidate {
-                        scan_label: format!("attachment:{}@{}", mime, part_path),
-                        text,
-                        kind,
-                        priority
-                    });
-                }
-            }
+        if should_scan_attachment_mime(&mime)
+            && let Some(text) = decoded_part_text(part)
+            && !text.trim().is_empty()
+        {
+            let kind = classify_attachment_kind(&mime);
+            let priority = attachment_scan_priority(kind, text);
+            out.push(AttachmentScanCandidate {
+                scan_label: format!("attachment:{}@{}", mime, part_path),
+                text,
+                kind,
+                priority,
+            });
         }
 
         if let Some(nested) = part.message() {
             collect_attachment_text_candidates_from_attachments(
                 nested,
                 &format!("{part_path}.m"),
-                out
+                out,
             );
             collect_attachment_text_candidates_from_text_bodies(
                 nested,
                 &format!("{part_path}.m"),
-                out
+                out,
             );
         }
     }
@@ -482,35 +477,35 @@ fn collect_attachment_text_candidates_from_attachments<'a>(
 fn collect_attachment_text_candidates_from_text_bodies<'a>(
     message: &'a Message<'a>,
     path: &str,
-    out: &mut Vec<AttachmentScanCandidate<'a>>
+    out: &mut Vec<AttachmentScanCandidate<'a>>,
 ) {
     for (idx, part) in message.text_bodies().enumerate() {
-        if let Some(text) = decoded_part_text(part) {
-            if !text.trim().is_empty() {
-                let kind = CandidateKind::TextBody;
-                let priority = attachment_scan_priority(kind, text);
-                out.push(AttachmentScanCandidate {
-                    scan_label: format!("text_body:text/plain@{path}.{idx}"),
-                    text,
-                    kind,
-                    priority
-                });
-            }
+        if let Some(text) = decoded_part_text(part)
+            && !text.trim().is_empty()
+        {
+            let kind = CandidateKind::TextBody;
+            let priority = attachment_scan_priority(kind, text);
+            out.push(AttachmentScanCandidate {
+                scan_label: format!("text_body:text/plain@{path}.{idx}"),
+                text,
+                kind,
+                priority,
+            });
         }
     }
 
     for (idx, part) in message.html_bodies().enumerate() {
-        if let Some(text) = decoded_part_text(part) {
-            if !text.trim().is_empty() {
-                let kind = CandidateKind::TextBody;
-                let priority = attachment_scan_priority(kind, text);
-                out.push(AttachmentScanCandidate {
-                    scan_label: format!("text_body:text/html@{path}.{idx}"),
-                    text,
-                    kind,
-                    priority
-                });
-            }
+        if let Some(text) = decoded_part_text(part)
+            && !text.trim().is_empty()
+        {
+            let kind = CandidateKind::TextBody;
+            let priority = attachment_scan_priority(kind, text);
+            out.push(AttachmentScanCandidate {
+                scan_label: format!("text_body:text/html@{path}.{idx}"),
+                text,
+                kind,
+                priority,
+            });
         }
     }
 }
@@ -547,13 +542,13 @@ fn classify_attachment_kind(mime: &str) -> CandidateKind {
         "text/rfc822-headers" => CandidateKind::OriginalHeaders,
         "message/rfc822" => CandidateKind::OriginalMessage,
         _ if mime.starts_with("text/") => CandidateKind::TextBody,
-        _ => CandidateKind::Other
+        _ => CandidateKind::Other,
     }
 }
 
 fn attachment_scan_priority(
     kind: CandidateKind,
-    text: &str
+    text: &str,
 ) -> u8 {
     match kind {
         CandidateKind::DeliveryStatus => 0,
@@ -577,10 +572,10 @@ fn attachment_scan_priority(
 }
 
 fn decoded_part_text<'a>(part: &'a MessagePart<'a>) -> Option<&'a str> {
-    if let Some(text) = part.text_contents() {
-        if !text.is_empty() {
-            return Some(text);
-        }
+    if let Some(text) = part.text_contents()
+        && !text.is_empty()
+    {
+        return Some(text);
     }
 
     let bytes = part.contents();
@@ -663,7 +658,7 @@ fn looks_like_delivery_report(text: &str) -> bool {
         "message/delivery-status",
         "undelivered",
         "mail delivery",
-        "returned mail"
+        "returned mail",
     ]
     .iter()
     .any(|marker| lower.contains(marker))

@@ -15,7 +15,7 @@ use crate::app::AppState;
 /// discovered `.eml` paths to the processing queue.
 pub async fn spawn_notify_watcher(
     state: AppState,
-    process_tx: mpsc::Sender<PathBuf>
+    process_tx: mpsc::Sender<PathBuf>,
 ) {
     if let Err(err) =
         run_notify_watcher(state.spool.incoming.clone(), state.shutdown.clone(), process_tx).await
@@ -27,7 +27,7 @@ pub async fn spawn_notify_watcher(
 async fn run_notify_watcher(
     incoming_dir: PathBuf,
     shutdown: CancellationToken,
-    process_tx: mpsc::Sender<PathBuf>
+    process_tx: mpsc::Sender<PathBuf>,
 ) -> Result<()> {
     let (tx, mut rx) = mpsc::unbounded_channel::<notify::Result<Event>>();
 
@@ -35,7 +35,7 @@ async fn run_notify_watcher(
         move |result| {
             let _ = tx.send(result);
         },
-        NotifyConfig::default()
+        NotifyConfig::default(),
     ) {
         Ok(w) => w,
         Err(err) => {
@@ -63,12 +63,11 @@ async fn run_notify_watcher(
                 match result {
                     Ok(event) => {
                         for path in event.paths {
-                            if is_eml_file(&path) {
-                                if process_tx.send(path).await.is_err() {
+                            if is_eml_file(&path)
+                                && process_tx.send(path).await.is_err() {
                                     info!("notify watcher stopping: process queue closed");
                                     break;
                                 }
-                            }
                         }
                     }
                     Err(err) => warn!("watch event error: error={err}"),
@@ -87,7 +86,7 @@ async fn run_notify_watcher(
 pub async fn spawn_periodic_scan(
     state: AppState,
     process_tx: mpsc::Sender<PathBuf>,
-    scan_secs: u64
+    scan_secs: u64,
 ) {
     let mut ticker = interval(Duration::from_secs(scan_secs.max(1)));
 
@@ -102,12 +101,11 @@ pub async fn spawn_periodic_scan(
                     Ok(mut entries) => {
                         while let Ok(Some(entry)) = entries.next_entry().await {
                             let path = entry.path();
-                            if is_eml_file(&path) {
-                                if process_tx.send(path).await.is_err() {
+                            if is_eml_file(&path)
+                                && process_tx.send(path).await.is_err() {
                                     info!("incoming scan loop stopping: process queue closed");
                                     return;
                                 }
-                            }
                         }
                     }
                     Err(err) => warn!("incoming scan failed: error={err}"),
@@ -124,7 +122,7 @@ pub async fn spawn_periodic_scan(
 pub async fn spawn_worker_dispatcher(
     state: AppState,
     process_rx: mpsc::Receiver<PathBuf>,
-    concurrency: usize
+    concurrency: usize,
 ) {
     let workers = concurrency.max(1);
     let shared_rx = Arc::new(Mutex::new(process_rx));
@@ -179,7 +177,7 @@ pub async fn spawn_worker_dispatcher(
 /// parsed bounce status to the database.
 async fn process_spooled_message(
     state: AppState,
-    incoming_path: &Path
+    incoming_path: &Path,
 ) -> Result<()> {
     if !is_eml_file(incoming_path) {
         return Ok(());
@@ -269,7 +267,7 @@ mod tests {
 
     async fn wait_for_path(
         rx: &mut mpsc::Receiver<PathBuf>,
-        expected: &Path
+        expected: &Path,
     ) -> bool {
         let expected = expected.to_path_buf();
         let receive = async {
