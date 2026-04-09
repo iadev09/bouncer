@@ -18,7 +18,7 @@ use crate::config::JournalConfig;
 pub async fn run_journal_watcher(
     config: JournalConfig,
     events_tx: mpsc::Sender<DeliveryEvent>,
-    shutdown: CancellationToken
+    shutdown: CancellationToken,
 ) -> Result<()> {
     let (lines_tx, mut lines_rx) = mpsc::unbounded_channel::<String>();
     let stop = Arc::new(AtomicBool::new(false));
@@ -131,7 +131,7 @@ pub async fn run_journal_watcher(
 fn run_reader_thread(
     config: JournalConfig,
     lines_tx: mpsc::UnboundedSender<String>,
-    stop: Arc<AtomicBool>
+    stop: Arc<AtomicBool>,
 ) {
     loop {
         if stop.load(Ordering::Relaxed) {
@@ -165,10 +165,10 @@ fn run_reader_thread(
                     let _ = reader.wait(Some(Duration::from_millis(500)));
                 }
                 Ok(_) => {
-                    if let Some(line) = extract_postfix_line(&mut reader, &config.identifiers) {
-                        if lines_tx.send(line).is_err() {
-                            return;
-                        }
+                    if let Some(line) = extract_postfix_line(&mut reader, &config.identifiers)
+                        && lines_tx.send(line).is_err()
+                    {
+                        return;
                     }
                 }
                 Err(err) => {
@@ -188,7 +188,7 @@ fn open_reader(config: &JournalConfig) -> Result<journal::Journal> {
 
 fn extract_postfix_line(
     reader: &mut journal::Journal,
-    identifiers: &[String]
+    identifiers: &[String],
 ) -> Option<String> {
     let message = get_data_string(reader, "MESSAGE")?;
     let identifier = get_data_string(reader, "SYSLOG_IDENTIFIER")
@@ -204,7 +204,7 @@ fn extract_postfix_line(
 
 fn get_data_string(
     reader: &mut journal::Journal,
-    key: &str
+    key: &str,
 ) -> Option<String> {
     reader
         .get_data(key)
@@ -214,7 +214,7 @@ fn get_data_string(
 
 fn prune_queue_map(
     queue_map: &mut HashMap<String, QueueEntry>,
-    ttl: Duration
+    ttl: Duration,
 ) -> usize {
     let before = queue_map.len();
     let now = Instant::now();
